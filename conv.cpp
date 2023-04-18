@@ -1,4 +1,6 @@
-#include "utils.h"
+//#include "utils.h"
+#include "conv.h"
+#include <cmath>
 
 void conv_1d_start ( //conv1 code
     fm_t Y_buf[1][32][187], //ignore first dimension, 32 output channels, 187 signal length
