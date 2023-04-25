@@ -28,6 +28,8 @@ fm_t fixp_conv_layer_output_feature_map4[1][32][44];
 fm_t fixp_conv_layer_output_feature_map3_max[1][32][20];
 fm_t fixp_conv_layer_output_feature_map4_max[1][32][8];
 fm_t fixp_conv_layer_output_feature_map5_max[1][32][2];
+fm_t fixp_dense1_output[1][32];
+fm_t fixp_dense2_output[1][5];
 
 fm_t fixp_conv_layer_output_feature_flat[1][64];
 
@@ -40,12 +42,19 @@ wt_t fixp_conv_layer_bias3[32];
 wt_t fixp_conv_layer_weights4[32][1][5];
 wt_t fixp_conv_layer_bias4[32];
 
+// declare weights and biases for dense1 and dense2
+fm_t fixp_dense1_weights[32][64]; 
+fm_t fixp_dense1_bias[32];
+fm_t fixp_dense2_weights[5][32];
+fm_t fixp_dense2_bias[5];
+
+
 void read_bin_files()
 {    
     // Weights 1
-    ifstream ifs_conv_weights("conv1_weights.bin", ios::in | ios::binary);
-    ifs_conv_weights.read((char*)(**conv_layer_weights1), 32*1*5*sizeof(float));
-    ifs_conv_weights.close();
+    ifstream ifs_conv1_weights("bin/conv1_weights.bin", ios::in | ios::binary);
+    ifs_conv1_weights.read((char*)(**conv_layer_weights1), 32*1*5*sizeof(float));
+    ifs_conv1_weights.close();
     
     // Typecast to fixed-point 
     for(int f = 0; f < 32; f++)
@@ -54,18 +63,18 @@ void read_bin_files()
                     fixp_conv_layer_weights1[f][c][m] = (wt_t) conv_layer_weights1[f][c][m];
     
     // Bias 1
-    ifstream ifs_conv_bias("../bin/conv1_bias.bin", ios::in | ios::binary);
-    ifs_conv_bias.read((char*)(conv_layer_bias1), 32*sizeof(float));
-    ifs_conv_bias.close();
+    ifstream ifs_conv1_bias("bin/conv1_bias.bin", ios::in | ios::binary);
+    ifs_conv1_bias.read((char*)(conv_layer_bias1), 32*sizeof(float));
+    ifs_conv1_bias.close();
     
     // // Typecast to fixed-point 
     for(int f = 0; f < 32; f++)
         fixp_conv_layer_bias1[f] = (wt_t) conv_layer_bias1[f];
 
     // Weights 2
-    ifstream ifs_conv_weights("conv2_weights.bin", ios::in | ios::binary);
-    ifs_conv_weights.read((char*)(**conv_layer_weights2), 32*1*5*sizeof(float));
-    ifs_conv_weights.close();
+    ifstream ifs_conv2_weights("bin/conv2_weights.bin", ios::in | ios::binary);
+    ifs_conv2_weights.read((char*)(**conv_layer_weights2), 32*1*5*sizeof(float));
+    ifs_conv2_weights.close();
     
     // Typecast to fixed-point 
     for(int f = 0; f < 32; f++)
@@ -74,18 +83,18 @@ void read_bin_files()
                     fixp_conv_layer_weights2[f][c][m] = (wt_t) conv_layer_weights2[f][c][m];
     
     // Bias 2
-    ifstream ifs_conv_bias("../bin/conv2_bias.bin", ios::in | ios::binary);
-    ifs_conv_bias.read((char*)(conv_layer_bias2), 32*sizeof(float));
-    ifs_conv_bias.close();
+    ifstream ifs_conv2_bias("bin/conv2_bias.bin", ios::in | ios::binary);
+    ifs_conv2_bias.read((char*)(conv_layer_bias2), 32*sizeof(float));
+    ifs_conv2_bias.close();
     
     // // Typecast to fixed-point 
     for(int f = 0; f < 32; f++)
         fixp_conv_layer_bias2[f] = (wt_t) conv_layer_bias2[f];
 
     // Weights 3
-    ifstream ifs_conv_weights("conv3_weights.bin", ios::in | ios::binary);
-    ifs_conv_weights.read((char*)(**conv_layer_weights3), 32*1*5*sizeof(float));
-    ifs_conv_weights.close();
+    ifstream ifs_conv3_weights("bin/conv3_weights.bin", ios::in | ios::binary);
+    ifs_conv3_weights.read((char*)(**conv_layer_weights3), 32*1*5*sizeof(float));
+    ifs_conv3_weights.close();
     
     // Typecast to fixed-point 
     for(int f = 0; f < 32; f++)
@@ -94,18 +103,18 @@ void read_bin_files()
                     fixp_conv_layer_weights3[f][c][m] = (wt_t) conv_layer_weights3[f][c][m];
     
     // Bias 3
-    ifstream ifs_conv_bias("../bin/conv3_bias.bin", ios::in | ios::binary);
-    ifs_conv_bias.read((char*)(conv_layer_bias3), 32*sizeof(float));
-    ifs_conv_bias.close();
+    ifstream ifs_conv3_bias("bin/conv3_bias.bin", ios::in | ios::binary);
+    ifs_conv3_bias.read((char*)(conv_layer_bias3), 32*sizeof(float));
+    ifs_conv3_bias.close();
     
     // // Typecast to fixed-point 
     for(int f = 0; f < 32; f++)
         fixp_conv_layer_bias3[f] = (wt_t) conv_layer_bias3[f];
 
     // Weights 4
-    ifstream ifs_conv_weights("conv4_weights.bin", ios::in | ios::binary);
-    ifs_conv_weights.read((char*)(**conv_layer_weights4), 32*1*5*sizeof(float));
-    ifs_conv_weights.close();
+    ifstream ifs_conv4_weights("bin/conv4_weights.bin", ios::in | ios::binary);
+    ifs_conv4_weights.read((char*)(**conv_layer_weights4), 32*1*5*sizeof(float));
+    ifs_conv4_weights.close();
     
     // Typecast to fixed-point 
     for(int f = 0; f < 32; f++)
@@ -114,9 +123,9 @@ void read_bin_files()
                     fixp_conv_layer_weights4[f][c][m] = (wt_t) conv_layer_weights4[f][c][m];
     
     // Bias 4
-    ifstream ifs_conv_bias("../bin/conv4_bias.bin", ios::in | ios::binary);
-    ifs_conv_bias.read((char*)(conv_layer_bias4), 32*sizeof(float));
-    ifs_conv_bias.close();
+    ifstream ifs_conv4_bias("bin/conv4_bias.bin", ios::in | ios::binary);
+    ifs_conv4_bias.read((char*)(conv_layer_bias4), 32*sizeof(float));
+    ifs_conv4_bias.close();
     
     // // Typecast to fixed-point 
     for(int f = 0; f < 32; f++)
@@ -150,14 +159,14 @@ int main(){
 
     max_pooling2(fixp_conv_layer_output_feature_map2, fixp_conv_layer_output_feature_map2_max);
 
-    conv1d_3 ( //conv3
+    conv1d_3_4 ( //conv3
         fixp_conv_layer_output_feature_map3, 
         fixp_conv_layer_output_feature_map2_max, 
         conv_layer_weights2, //32 out channels, kernel size:5
         conv_layer_bias2 //32 outchannels
     );
 
-    conv1d_4 ( //conv3
+    conv1d_3_4 ( //conv3
         fixp_conv_layer_output_feature_map4, 
         fixp_conv_layer_output_feature_map3, 
         conv_layer_weights2, //32 out channels, kernel size:5
@@ -170,18 +179,31 @@ int main(){
 
     flatten(fixp_conv_layer_output_feature_map5_max, fixp_conv_layer_output_feature_flat); //makes array into (1,64)
 
+    dense1(fixp_conv_layer_output_feature_flat, fixp_dense1_bias, fixp_dense1_weights,  fixp_dense1_output);
+    dense2(fixp_dense1_output, fixp_dense2_bias, fixp_dense2_weights, fixp_dense2_output);
+
     //need to do linear/dense layers here
 
     std::cout << "C model complete!\n" << std::endl;
-    
+
+    cout << "fixp_conv_layer_output_feature_flat" << endl;
+    for(int f = 0; f < 64; f++){
+        cout <<  fixp_conv_layer_output_feature_flat[f] << "   ";
+    }
+    cout << endl;
+    cout << "fixp_dense2_output" << endl;
+    for(int f = 0; f < 5; f++){
+        cout << fixp_dense2_output[0][f] << "   ";
+    }
+    cout << endl;
     // Compute Mean-Squared-Error
     for(int f = 0; f < 1; f++)
     {
         for(int i = 0; i < 32; i++)
         {
-            for(int j = 0; j < 187; j++)
+            for(int j = 0; j < 8; j++)
             {
-                //cout << conv_layer_output_feature_map[f][i][j];        
+                //cout << fixp_conv_layer_output_feature_map1[f][i][j] << "   ";        
             }
             //cout << endl;
         }

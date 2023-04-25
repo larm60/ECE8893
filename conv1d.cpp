@@ -289,3 +289,40 @@ void flatten(
 
 
 
+// pass flattened feature map through dense1
+void dense1(
+    fm_t fixp_conv_layer_output_feature_flat[1][64],
+    fm_t fixp_dense1_bias[32],
+    fm_t fixp_dense1_weights[32][64],
+    fm_t fixp_dense1_output[1][32])
+{
+    
+    for (int i = 0; i < 32; i++) {
+        fixp_dense1_output[0][i] = fixp_dense1_bias[i];
+        for (int j = 0; j < 64; j++) {
+            fixp_dense1_output[0][i] += fixp_conv_layer_output_feature_flat[0][j] * fixp_dense1_weights[i][j];
+        }
+    }
+
+    // apply ReLU activation function
+    for (int i = 0; i < 32; i++) {
+        if (fixp_dense1_output[0][i] < 0) {
+            fixp_dense1_output[0][i] = 0;
+        }
+    }
+}
+
+void dense2(
+    fm_t fixp_dense1_output[1][32],
+    fm_t fixp_dense2_bias[5],
+    fm_t fixp_dense2_weights[5][32],
+    fm_t fixp_dense2_output[1][5])
+{
+    for (int i = 0; i < 5; i++) {
+        fixp_dense2_output[0][i] = fixp_dense2_bias[i];
+        for (int j = 0; j < 32; j++) {
+            fixp_dense2_output[0][i] += fixp_dense1_output[0][j] * fixp_dense2_weights[i][j];
+        }
+    }
+}
+
