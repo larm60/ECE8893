@@ -3,20 +3,23 @@ open_project proj
 set_top tiled_conv
 
 add_files conv.h
-add_files conv.cpp
-add_files conv_7x7.cpp
-add_files tiled_conv.cpp
+add_files conv1d.cpp
 
-#add_files -tb ../conv1.bin
-#add_files -tb ../conv1_weights.bin
-#add_files -tb ../conv1_bias.bin
-#add_files -tb ../conv2.bin
-#add_files -tb ../conv2_weights.bin
-#add_files -tb ../conv2_bias.bin
-#add_files -tb ../conv3.bin
-#add_files -tb ../conv3_weights.bin
-#add_files -tb ../conv3_bias.bin
-#add_files -tb ./sim.cpp
+#add_files -tb bin/conv1.bin
+#add_files -tb bin/conv1_weights.bin
+#add_files -tb bin/conv1_bias.bin
+#add_files -tb bin/conv2.bin
+#add_files -tb bin/conv2_weights.bin
+#add_files -tb bin/conv2_bias.bin
+#add_files -tb bin/conv3.bin
+#add_files -tb bin/conv3_weights.bin
+#add_files -tb bin/conv3_bias.bin
+#add_files -tb bin/dense1_bias.bin
+#add_files -tb bin/dense1_weights.bin
+#add_files -tb bin/dense2_bias.bin
+#add_files -tb bin/dense2_weights.bin
+
+#add_files -tb sim.cpp
 
 open_solution "solution1" -flow_target vivado
 set_part {xc7z020clg400-1}

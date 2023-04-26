@@ -43,10 +43,10 @@ wt_t fixp_conv_layer_weights4[32][1][5];
 wt_t fixp_conv_layer_bias4[32];
 
 // declare weights and biases for dense1 and dense2
-fm_t fixp_dense1_weights[32][64]; 
-fm_t fixp_dense1_bias[32];
-fm_t fixp_dense2_weights[5][32];
-fm_t fixp_dense2_bias[5];
+wt_t fixp_dense1_weights[32][64]; 
+wt_t fixp_dense1_bias[32];
+wt_t fixp_dense2_weights[5][32];
+wt_t fixp_dense2_bias[5];
 
 
 void read_bin_files()
@@ -130,6 +130,27 @@ void read_bin_files()
     // // Typecast to fixed-point 
     for(int f = 0; f < 32; f++)
         fixp_conv_layer_bias4[f] = (wt_t) conv_layer_bias4[f];
+
+
+    ifstream ifs_dense1_bias("bin/dense1_bias.bin", ios::in | ios::binary);
+    ifs_dense1_bias.read((char*)(fixp_dense1_bias), 32*sizeof(float));
+    ifs_dense1_bias.close();
+
+    ifstream ifs_dense2_bias("bin/dense2_bias.bin", ios::in | ios::binary);
+    ifs_dense2_bias.read((char*)(fixp_dense2_bias), 32*sizeof(float));
+    ifs_dense2_bias.close();
+
+
+    ifstream ifs_dense1_weights("bin/dense1_weights.bin", ios::in | ios::binary);
+    ifs_dense1_weights.read((char*)(fixp_dense1_weights), 32*sizeof(float));
+    ifs_dense1_weights.close();
+
+
+    ifstream ifs_dense2_weights("bin/dense2_weights.bin", ios::in | ios::binary);
+    ifs_dense2_weights.read((char*)(fixp_dense2_weights), 32*sizeof(float));
+    ifs_dense2_weights.close();
+
+    
 }
 
 int main(){
