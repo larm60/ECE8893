@@ -19,6 +19,8 @@ float conv_layer_bias3[32];
 float conv_layer_weights4[32][32][5];
 float conv_layer_bias4[32];
 
+fm_t fixp_conv_layer_input_feature_map1[1][1][187];
+
 fm_t fixp_conv_layer_output_feature_map1[1][32][187];
 fm_t fixp_conv_layer_output_feature_map1_max[1][32][92];
 fm_t fixp_conv_layer_output_feature_map2[1][32][92];
@@ -51,6 +53,12 @@ wt_t fixp_dense2_bias[5];
 
 void read_bin_files()
 {    
+    // Weights 1
+    ifstream ifs_conv1("bin/conv1.bin", ios::in | ios::binary);
+    ifs_conv1.read((char*)(**fixp_conv_layer_input_feature_map1), 187*1*1*sizeof(float));
+    ifs_conv1.close();
+    
+
     // Weights 1
     ifstream ifs_conv1_weights("bin/conv1_weights.bin", ios::in | ios::binary);
     ifs_conv1_weights.read((char*)(**conv_layer_weights1), 32*1*5*sizeof(float));
@@ -160,7 +168,7 @@ int main(){
 
     std::cout << "Beginning C model..." << std::endl;
 
-    fm_t fixp_conv_layer_input_feature_map1[1][1][187] = {1}; //sets input features all to 1
+    //fm_t fixp_conv_layer_input_feature_map1[1][1][187] = {1}; //sets input features all to 1
 
     conv1d_1 ( //conv1 code
         fixp_conv_layer_output_feature_map1, //ignore first dimension, 32 output channels, 187 signal length
