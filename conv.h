@@ -97,5 +97,23 @@ void dense2(
     fm_t fixp_dense2_weights[5][32],
     fm_t fixp_dense2_output[1][5]);
 
+void tiled_conv (
+    fm_t input_feature_map[1][1][187],
+    wt_t fixp_conv_layer_weights1[32][1][5],
+    wt_t fixp_conv_layer_bias1[32],
+    wt_t fixp_conv_layer_weights2[32][32][5],
+    wt_t fixp_conv_layer_bias2[32],
+    wt_t fixp_conv_layer_weights3[32][32][5],
+    wt_t fixp_conv_layer_bias3[32],
+    wt_t fixp_conv_layer_weights4[32][32][5],
+    wt_t fixp_conv_layer_bias4[32],
+
+    // declare weights and biases for dense1 and dense2
+    wt_t fixp_dense1_weights[32][64], 
+    wt_t fixp_dense1_bias[32],
+    wt_t fixp_dense2_weights[5][32],
+    wt_t fixp_dense2_bias[5],
+    fm_t conv_layer_output_feature[1][5]
+);
 
 #endif

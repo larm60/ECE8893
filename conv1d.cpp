@@ -1,5 +1,18 @@
 #include "conv.h"
 
+fm_t fixp_conv_layer_output_feature_map1[1][32][187];
+fm_t fixp_conv_layer_output_feature_map1_max[1][32][92];
+fm_t fixp_conv_layer_output_feature_map2[1][32][92];
+fm_t fixp_conv_layer_output_feature_map2_max[1][32][44];
+fm_t fixp_conv_layer_output_feature_map3[1][32][44];
+fm_t fixp_conv_layer_output_feature_map4[1][32][44];
+fm_t fixp_conv_layer_output_feature_map3_max[1][32][20];
+fm_t fixp_conv_layer_output_feature_map4_max[1][32][8];
+fm_t fixp_conv_layer_output_feature_map5_max[1][32][2];
+fm_t fixp_dense1_output[1][32];
+fm_t fixp_conv_layer_output_feature_flat[1][64];
+
+
 void conv1d_1 ( //conv1 code
     fm_t Y_buf[1][32][187], //ignore first dimension, 32 output channels, 187 signal length
     fm_t X_buf[1][1][187], //ignore first dimension, 1 input channel, signal length
@@ -304,7 +317,7 @@ void dense1(
         }
     }
 
-    // apply ReLU activation function
+    // apply ReLU activation functionxqxq
     for (int i = 0; i < 32; i++) {
         if (fixp_dense1_output[0][i] < 0) {
             fixp_dense1_output[0][i] = 0;
@@ -316,13 +329,75 @@ void dense2(
     fm_t fixp_dense1_output[1][32],
     fm_t fixp_dense2_bias[5],
     fm_t fixp_dense2_weights[5][32],
-    fm_t fixp_dense2_output[1][5])
+    fm_t output_feature_map[1][5])
 {
     for (int i = 0; i < 5; i++) {
-        fixp_dense2_output[0][i] = fixp_dense2_bias[i];
+        output_feature_map[0][i] = fixp_dense2_bias[i];
         for (int j = 0; j < 32; j++) {
-            fixp_dense2_output[0][i] += fixp_dense1_output[0][j] * fixp_dense2_weights[i][j];
+            output_feature_map[0][i] += fixp_dense1_output[0][j] * fixp_dense2_weights[i][j];
         }
     }
 }
 
+
+
+void tiled_conv (
+    fm_t input_feature_map[1][1][187],
+    wt_t fixp_conv_layer_weights1[32][1][5],
+    wt_t fixp_conv_layer_bias1[32],
+    wt_t fixp_conv_layer_weights2[32][32][5],
+    wt_t fixp_conv_layer_bias2[32],
+    wt_t fixp_conv_layer_weights3[32][32][5],
+    wt_t fixp_conv_layer_bias3[32],
+    wt_t fixp_conv_layer_weights4[32][32][5],
+    wt_t fixp_conv_layer_bias4[32],
+
+    // declare weights and biases for dense1 and dense2
+    wt_t fixp_dense1_weights[32][64], 
+    wt_t fixp_dense1_bias[32],
+    wt_t fixp_dense2_weights[5][32],
+    wt_t fixp_dense2_bias[5],
+    fm_t output_feature_map[1][5]
+)
+{
+    conv1d_1 ( //conv1 code
+        fixp_conv_layer_output_feature_map1, //ignore first dimension, 32 output channels, 187 signal length
+        input_feature_map, //ignore first dimension, 1 input channel, signal length
+        fixp_conv_layer_weights1, //32 out channels, kernel size:5
+        fixp_conv_layer_bias1 //32 outchannels
+    );
+
+    max_pooling1(fixp_conv_layer_output_feature_map1, fixp_conv_layer_output_feature_map1_max);
+    
+    conv1d_2 ( //conv2
+        fixp_conv_layer_output_feature_map2, 
+        fixp_conv_layer_output_feature_map1_max, 
+        fixp_conv_layer_weights2, //32 out channels, kernel size:5
+        fixp_conv_layer_bias2 //32 outchannels
+    );
+
+    max_pooling2(fixp_conv_layer_output_feature_map2, fixp_conv_layer_output_feature_map2_max);
+
+    conv1d_3_4 ( //conv3
+        fixp_conv_layer_output_feature_map3, 
+        fixp_conv_layer_output_feature_map2_max, 
+        fixp_conv_layer_weights3, //32 out channels, kernel size:5
+        fixp_conv_layer_bias3 //32 outchannels
+    );
+
+    conv1d_3_4 ( //conv3
+        fixp_conv_layer_output_feature_map4, 
+        fixp_conv_layer_output_feature_map3, 
+        fixp_conv_layer_weights4, //32 out channels, kernel size:5
+        fixp_conv_layer_bias4 //32 outchannels
+    );
+
+    max_pooling3(fixp_conv_layer_output_feature_map4, fixp_conv_layer_output_feature_map3_max);
+    max_pooling4(fixp_conv_layer_output_feature_map3_max, fixp_conv_layer_output_feature_map4_max);
+    max_pooling5(fixp_conv_layer_output_feature_map4_max, fixp_conv_layer_output_feature_map5_max);
+
+    flatten(fixp_conv_layer_output_feature_map5_max, fixp_conv_layer_output_feature_flat); //makes array into (1,64)
+
+    dense1(fixp_conv_layer_output_feature_flat, fixp_dense1_bias, fixp_dense1_weights,  fixp_dense1_output);
+    dense2(fixp_dense1_output, fixp_dense2_bias, fixp_dense2_weights, output_feature_map);
+}
