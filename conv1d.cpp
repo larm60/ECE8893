@@ -360,6 +360,25 @@ void tiled_conv (
     fm_t output_feature_map[1][5]
 )
 {
+    #pragma HLS INTERFACE m_axi depth=1  port=input_feature_map   bundle=fm
+    #pragma HLS INTERFACE m_axi depth=1  port=output_feature_map  bundle=fm
+
+    #pragma HLS INTERFACE m_axi depth=1  port=fixp_conv_layer_weights1  bundle=c_weight
+    #pragma HLS INTERFACE m_axi depth=1  port=fixp_conv_layer_weights2  bundle=c_weight
+    #pragma HLS INTERFACE m_axi depth=1  port=fixp_conv_layer_weights3  bundle=c_weight
+    #pragma HLS INTERFACE m_axi depth=1  port=fixp_conv_layer_weights4  bundle=c_weight
+    #pragma HLS INTERFACE m_axi depth=1  port=fixp_conv_layer_bias1  bundle=c_bias
+    #pragma HLS INTERFACE m_axi depth=1  port=fixp_conv_layer_bias2  bundle=c_bias
+    #pragma HLS INTERFACE m_axi depth=1  port=fixp_conv_layer_bias3  bundle=c_bias
+    #pragma HLS INTERFACE m_axi depth=1  port=fixp_conv_layer_bias4  bundle=c_bias
+
+    #pragma HLS INTERFACE m_axi depth=1  port=fixp_dense1_weights   bundle=dense
+    #pragma HLS INTERFACE m_axi depth=1  port=fixp_dense1_bias   bundle=dense
+    #pragma HLS INTERFACE m_axi depth=1  port=fixp_dense2_weights   bundle=dense
+    #pragma HLS INTERFACE m_axi depth=1  port=fixp_dense2_bias   bundle=dense
+    
+    #pragma HLS INTERFACE s_axilite register	port=return
+    
     conv1d_1 ( //conv1 code
         fixp_conv_layer_output_feature_map1, //ignore first dimension, 32 output channels, 187 signal length
         input_feature_map, //ignore first dimension, 1 input channel, signal length
