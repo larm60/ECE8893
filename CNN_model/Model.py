@@ -13,17 +13,16 @@ class Model(nn.Module):
         self.max3 = nn.MaxPool1d(kernel_size=5, stride=2) 
         self.conv4 = nn.Conv1d(32, 32, kernel_size=5, padding = 'same')
         self.max4 = nn.MaxPool1d(kernel_size=5, stride=2) 
-
-        self.avg = nn.AvgPool1d(2)
-        self.max5 = nn.AdaptiveMaxPool1d(2)
+        self.max5 = nn.MaxPool1d(kernel_size=5, stride=2) 
 
         self.dense1 = nn.Linear(64,32)
         self.acc = nn.ReLU()
         self.dense2 = nn.Linear(32,5)
         
     def forward(self, x):
-
+        #print(x.shape)
         x = self.conv1(x)
+        #print(x.shape)
         x = self.acc(x)
         x = self.max1(x)
         x = self.conv2(x)
@@ -35,10 +34,9 @@ class Model(nn.Module):
         x = self.conv4(x)
         x = self.acc(x)
         x = self.max4(x)
+        x = self.max5(x)
 
-        x=self.max5(x) #global maxpool
         x = x.view(x.shape[0], -1) #flattens
-
         x = self.dense1(x)
         x = self.acc(x)
         x = self.dense2(x)

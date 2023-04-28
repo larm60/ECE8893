@@ -11,7 +11,7 @@ import re
 from typing import Dict,Iterable, Callable
 
 model   = Model.Model()
-trained_model_path  = "/Users/daniela/Library/CloudStorage/OneDrive-GeorgiaInstituteofTechnology/Spring 2023/FPGA/Project/model_fold_4.pth"
+trained_model_path  = "/Users/daniela/Library/CloudStorage/OneDrive-GeorgiaInstituteofTechnology/Spring 2023/FPGA/Project/model_fold_6.pth"
 model.load_state_dict(torch.load(trained_model_path,map_location=torch.device('cpu')))
 model.eval()
 
@@ -67,6 +67,7 @@ if(write_layer_outputs_to_file):
         print("Outputs ",layer)
         #print('HEREEEE')
         if(layer in features.keys()):
+            print('LAYER NAME:',layer)
             layer_name = layer.replace("].","_")
             layer_name = layer_name.replace("[", "_")
             layer_name = layer_name.replace("]", "")
@@ -81,7 +82,8 @@ if(write_layer_params_to_file):
     for i in range(len(layers)):
         layer = layers[i]
         print(layer)
-        if('conv' in layer or 'downsample[0]' in layer):
+        #if('conv' in layer or 'downsample[0]' in layer):
+        if('conv' in layer or 'downsample[0]' in layer or 'dense' in layer):
             layer_name = layer.replace("].","_")
             layer_name = layer_name.replace("[", "_")
             layer_name = layer_name.replace("]", "")
@@ -90,7 +92,7 @@ if(write_layer_params_to_file):
             param_name = layer.replace("[",".")
             param_name = param_name.replace("]","")
             param = model.state_dict()[param_name+'.weight'].detach().numpy()
-            print('weigth shape',model.state_dict()[param_name+'.weight'].detach().numpy().shape)
+            print('weight shape:',model.state_dict()[param_name+'.weight'].detach().numpy().shape)
             with open(filename, "wb") as f:
                 param.tofile(f)
             print("Param " + param_name + " printed to file " + filename)
@@ -120,13 +122,14 @@ if(write_layer_params_to_file):
 if(write_fused_layer_params_to_file):
     # Write layer params
     for i in range(len(layers)):
-        #print('WRITE FUSED LAYER PARAMS TO FILE')
+
         layer = layers[i]
-        #print(layer)
-        #print('test outside')
+
         print(layer)
+        print('here')
         #if('linear' in layer):
-        if('conv' in layer):
+        #if('conv' in layer):
+        if('conv' in layer or 'dense' in layer):
             #print('test inside IF')
             linear_weight = model.state_dict()[layer+'.weight'].detach().numpy()
             filename = "bin/" + layer + "_weights.bin"
