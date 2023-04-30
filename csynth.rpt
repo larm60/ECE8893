@@ -1,0 +1,561 @@
+
+
+================================================================
+== Synthesis Summary Report of 'tiled_conv'
+================================================================
++ General Information: 
+    * Date:           Sat Apr 29 14:44:39 2023
+    * Version:        2022.1.2 (Build 3605665 on Fri Aug  5 22:52:02 MDT 2022)
+    * Project:        proj
+    * Solution:       solution1 (Vivado IP Flow Target)
+    * Product family: zynq
+    * Target device:  xc7z020-clg400-1
+    
+
++ Performance & Resource Estimates: 
+    
+    PS: '+' for module; 'o' for loop; '*' for dataflow
+    +-----------------------------------------------------------------------------+------+------+---------+-----------+----------+---------+------+----------+-----------+----------+-------------+-------------+-----+
+    |                                   Modules                                   | Issue|      | Latency |  Latency  | Iteration|         | Trip |          |           |          |             |             |     |
+    |                                   & Loops                                   | Type | Slack| (cycles)|    (ns)   |  Latency | Interval| Count| Pipelined|   BRAM    |    DSP   |      FF     |     LUT     | URAM|
+    +-----------------------------------------------------------------------------+------+------+---------+-----------+----------+---------+------+----------+-----------+----------+-------------+-------------+-----+
+    |+ tiled_conv                                                                 |     -|  0.00|   639782|  6.398e+06|         -|   639783|     -|        no|  131 (46%)|  45 (20%)|  24012 (22%)|  27485 (51%)|    -|
+    | + tiled_conv_Pipeline_load_input                                            |     -|  0.00|      190|  1.900e+03|         -|      190|     -|        no|          -|         -|     71 (~0%)|    153 (~0%)|    -|
+    |  o load_input                                                               |     -|  7.30|      188|  1.880e+03|         3|        1|   187|       yes|          -|         -|            -|            -|    -|
+    | + tiled_conv_Pipeline_load_conv_weights1_VITIS_LOOP_459_1                   |     -|  0.00|      163|  1.630e+03|         -|      163|     -|        no|          -|         -|     55 (~0%)|    137 (~0%)|    -|
+    |  o load_conv_weights1_VITIS_LOOP_459_1                                      |     -|  7.30|      161|  1.610e+03|         3|        1|   160|       yes|          -|         -|            -|            -|    -|
+    | + tiled_conv_Pipeline_load_dense1_weights_VITIS_LOOP_493_8                  |     -|  0.00|     2051|  2.051e+04|         -|     2051|     -|        no|          -|         -|     74 (~0%)|    157 (~0%)|    -|
+    |  o load_dense1_weights_VITIS_LOOP_493_8                                     |     -|  7.30|     2049|  2.049e+04|         3|        1|  2048|       yes|          -|         -|            -|            -|    -|
+    | + tiled_conv_Pipeline_13                                                    |     -|  3.85|        7|     70.000|         -|        7|     -|        no|          -|         -|      5 (~0%)|     46 (~0%)|    -|
+    |  o Loop 1                                                                   |     -|  7.30|        5|     50.000|         1|        1|     5|       yes|          -|         -|            -|            -|    -|
+    | + tiled_conv_Pipeline_load_conv_weights2_VITIS_LOOP_466_2_VITIS_LOOP_467_3  |     -|  0.00|     5123|  5.123e+04|         -|     5123|     -|        no|          -|         -|     90 (~0%)|    252 (~0%)|    -|
+    |  o load_conv_weights2_VITIS_LOOP_466_2_VITIS_LOOP_467_3                     |     -|  7.30|     5121|  5.121e+04|         3|        1|  5120|       yes|          -|         -|            -|            -|    -|
+    | + tiled_conv_Pipeline_load_dense2_weights_VITIS_LOOP_500_9                  |     -|  0.00|      163|  1.630e+03|         -|      163|     -|        no|          -|         -|     64 (~0%)|    154 (~0%)|    -|
+    |  o load_dense2_weights_VITIS_LOOP_500_9                                     |     -|  7.30|      161|  1.610e+03|         3|        1|   160|       yes|          -|         -|            -|            -|    -|
+    | + conv1d_1                                                                  |     -|  0.00|     7367|  7.367e+04|         -|     7367|     -|        no|          -|   15 (6%)|    5012 (4%)|    3252 (6%)|    -|
+    |  o conv1d_1a                                                                |     -|  7.30|     7360|  7.360e+04|       230|        -|    32|        no|          -|         -|            -|            -|    -|
+    |   + conv1d_1_Pipeline_conv1d_1b                                             |     -|  0.04|      227|  2.270e+03|         -|      227|     -|        no|          -|   15 (6%)|    4777 (4%)|    3056 (5%)|    -|
+    |    o conv1d_1b                                                              |     -|  7.30|      225|  2.250e+03|        40|        1|   187|       yes|          -|         -|            -|            -|    -|
+    | + tiled_conv_Pipeline_load_conv_weights3_VITIS_LOOP_475_4_VITIS_LOOP_476_5  |     -|  0.00|     5123|  5.123e+04|         -|     5123|     -|        no|          -|         -|     90 (~0%)|    252 (~0%)|    -|
+    |  o load_conv_weights3_VITIS_LOOP_475_4_VITIS_LOOP_476_5                     |     -|  7.30|     5121|  5.121e+04|         3|        1|  5120|       yes|          -|         -|            -|            -|    -|
+    | + tiled_conv_Pipeline_VITIS_LOOP_167_1_VITIS_LOOP_169_2                     |     -|  0.19|     8845|  8.845e+04|         -|     8845|     -|        no|          -|   1 (~0%)|    836 (~0%)|    1092 (2%)|    -|
+    |  o VITIS_LOOP_167_1_VITIS_LOOP_169_2                                        |    II|  7.30|     8843|  8.843e+04|        15|        3|  2944|       yes|          -|         -|            -|            -|    -|
+    | + conv1d_2                                                                  |     -|  0.00|   232449|  2.324e+06|         -|   232449|     -|        no|          -|    3 (1%)|    2407 (2%)|    1986 (3%)|    -|
+    |  o conv1d_2a_conv1d_2b                                                      |     -|  7.30|   232448|  2.324e+06|       227|        -|  1024|        no|          -|         -|            -|            -|    -|
+    |   + conv1d_2_Pipeline_conv1d_2c                                             |     -|  0.00|      223|  2.230e+03|         -|      223|     -|        no|          -|    3 (1%)|    2061 (1%)|    1677 (3%)|    -|
+    |    o conv1d_2c                                                              |    II|  7.30|      221|  2.210e+03|        40|        2|    92|       yes|          -|         -|            -|            -|    -|
+    | + tiled_conv_Pipeline_load_conv_weights4_VITIS_LOOP_484_6_VITIS_LOOP_485_7  |     -|  0.00|     5123|  5.123e+04|         -|     5123|     -|        no|          -|         -|     90 (~0%)|    252 (~0%)|    -|
+    |  o load_conv_weights4_VITIS_LOOP_484_6_VITIS_LOOP_485_7                     |     -|  7.30|     5121|  5.121e+04|         3|        1|  5120|       yes|          -|         -|            -|            -|    -|
+    | + tiled_conv_Pipeline_VITIS_LOOP_200_1_VITIS_LOOP_202_2                     |     -|  0.12|     4236|  4.236e+04|         -|     4236|     -|        no|          -|   1 (~0%)|    702 (~0%)|     990 (1%)|    -|
+    |  o VITIS_LOOP_200_1_VITIS_LOOP_202_2                                        |    II|  7.30|     4234|  4.234e+04|        14|        3|  1408|       yes|          -|         -|            -|            -|    -|
+    | + conv1d_3_4                                                                |     -|  0.00|   178177|  1.782e+06|         -|   178177|     -|        no|          -|   10 (4%)|    2140 (2%)|    2512 (4%)|    -|
+    |  o conv1d_3a_conv1d_3b                                                      |     -|  7.30|   178176|  1.782e+06|       174|        -|  1024|        no|          -|         -|            -|            -|    -|
+    |   + conv1d_3_4_Pipeline_conv1d_3c                                           |     -|  0.00|      169|  1.690e+03|         -|      169|     -|        no|          -|   10 (4%)|    1787 (1%)|    2261 (4%)|    -|
+    |    o conv1d_3c                                                              |    II|  7.30|      167|  1.670e+03|        39|        3|    44|       yes|          -|         -|            -|            -|    -|
+    | + tiled_conv_Pipeline_VITIS_LOOP_233_1_VITIS_LOOP_235_2                     |     -|  0.19|     1932|  1.932e+04|         -|     1932|     -|        no|          -|         -|    681 (~0%)|     999 (1%)|    -|
+    |  o VITIS_LOOP_233_1_VITIS_LOOP_235_2                                        |    II|  7.30|     1930|  1.930e+04|        14|        3|   640|       yes|          -|         -|            -|            -|    -|
+    | + tiled_conv_Pipeline_VITIS_LOOP_266_1_VITIS_LOOP_268_2                     |     -|  0.19|      780|  7.800e+03|         -|      780|     -|        no|          -|         -|    621 (~0%)|     942 (1%)|    -|
+    |  o VITIS_LOOP_266_1_VITIS_LOOP_268_2                                        |    II|  7.30|      778|  7.780e+03|        14|        3|   256|       yes|          -|         -|            -|            -|    -|
+    | + tiled_conv_Pipeline_VITIS_LOOP_299_1_VITIS_LOOP_301_2                     |     -|  0.19|      202|  2.020e+03|         -|      202|     -|        no|          -|         -|    529 (~0%)|     788 (1%)|    -|
+    |  o VITIS_LOOP_299_1_VITIS_LOOP_301_2                                        |    II|  7.30|      200|  2.000e+03|        12|        3|    64|       yes|          -|         -|            -|            -|    -|
+    | + flatten                                                                   |    II|  7.30|        0|      0.000|         -|        1|     -|       yes|          -|         -|            -|            -|    -|
+    | + dense1                                                                    |     -|  0.00|    22825|  2.282e+05|         -|    22825|     -|        no|          -|         -|    280 (~0%)|     599 (1%)|    -|
+    |  o dense1_a                                                                 |     -|  7.30|    22657|  2.266e+05|       708|        -|    32|        no|          -|         -|            -|            -|    -|
+    |   o dense1_b                                                                |     -|  7.30|      704|  7.040e+03|        11|        -|    64|        no|          -|         -|            -|            -|    -|
+    |  o last_acc                                                                 |     -|  7.30|      160|  1.600e+03|         5|        -|    32|        no|          -|         -|            -|            -|    -|
+    | + dense2                                                                    |     -|  0.00|     1788|  1.788e+04|         -|     1788|     -|        no|          -|         -|    206 (~0%)|    218 (~0%)|    -|
+    |  o dense2_a                                                                 |     -|  7.30|     1781|  1.781e+04|       356|        -|     5|        no|          -|         -|            -|            -|    -|
+    |   o dense2_b                                                                |     -|  7.30|      352|  3.520e+03|        11|        -|    32|        no|          -|         -|            -|            -|    -|
+    | + tiled_conv_Pipeline_VITIS_LOOP_549_10                                     |     -|  0.00|        8|     80.000|         -|        8|     -|        no|          -|         -|     41 (~0%)|     68 (~0%)|    -|
+    |  o VITIS_LOOP_549_10                                                        |     -|  7.30|        6|     60.000|         3|        1|     5|       yes|          -|         -|            -|            -|    -|
+    +-----------------------------------------------------------------------------+------+------+---------+-----------+----------+---------+------+----------+-----------+----------+-------------+-------------+-----+
+
+
+================================================================
+== HW Interfaces
+================================================================
+* M_AXI
++----------------+------------+---------------+---------+--------+----------+-----------+--------------+--------------+-------------+-------------+
+| Interface      | Data Width | Address Width | Latency | Offset | Register | Max Widen | Max Read     | Max Write    | Num Read    | Num Write   |
+|                | (SW->HW)   |               |         |        |          | Bitwidth  | Burst Length | Burst Length | Outstanding | Outstanding |
++----------------+------------+---------------+---------+--------+----------+-----------+--------------+--------------+-------------+-------------+
+| m_axi_c_bias   | 32 -> 32   | 64            | 0       | slave  | 0        | 0         | 16           | 16           | 16          | 16          |
+| m_axi_c_weight | 32 -> 32   | 64            | 0       | slave  | 0        | 0         | 16           | 16           | 16          | 16          |
+| m_axi_dense    | 32 -> 32   | 64            | 0       | slave  | 0        | 0         | 16           | 16           | 16          | 16          |
+| m_axi_fm       | 32 -> 32   | 64            | 0       | slave  | 0        | 0         | 16           | 16           | 16          | 16          |
++----------------+------------+---------------+---------+--------+----------+-----------+--------------+--------------+-------------+-------------+
+
+* S_AXILITE Interfaces
++---------------+------------+---------------+--------+----------+
+| Interface     | Data Width | Address Width | Offset | Register |
++---------------+------------+---------------+--------+----------+
+| s_axi_control | 32         | 8             | 16     | 0        |
++---------------+------------+---------------+--------+----------+
+
+* S_AXILITE Registers
++---------------+----------------------------+--------+-------+--------+-----------------------------------------+----------------------------------------------------------------------+
+| Interface     | Register                   | Offset | Width | Access | Description                             | Bit Fields                                                           |
++---------------+----------------------------+--------+-------+--------+-----------------------------------------+----------------------------------------------------------------------+
+| s_axi_control | CTRL                       | 0x00   | 32    | RW     | Control signals                         | 0=AP_START 1=AP_DONE 2=AP_IDLE 3=AP_READY 7=AUTO_RESTART 9=INTERRUPT |
+| s_axi_control | GIER                       | 0x04   | 32    | RW     | Global Interrupt Enable Register        | 0=Enable                                                             |
+| s_axi_control | IP_IER                     | 0x08   | 32    | RW     | IP Interrupt Enable Register            | 0=CHAN0_INT_EN 1=CHAN1_INT_EN                                        |
+| s_axi_control | IP_ISR                     | 0x0c   | 32    | RW     | IP Interrupt Status Register            | 0=CHAN0_INT_ST 1=CHAN1_INT_ST                                        |
+| s_axi_control | input_feature_map_1        | 0x10   | 32    | W      | Data signal of input_feature_map        |                                                                      |
+| s_axi_control | input_feature_map_2        | 0x14   | 32    | W      | Data signal of input_feature_map        |                                                                      |
+| s_axi_control | fixp_conv_layer_weights1_1 | 0x1c   | 32    | W      | Data signal of fixp_conv_layer_weights1 |                                                                      |
+| s_axi_control | fixp_conv_layer_weights1_2 | 0x20   | 32    | W      | Data signal of fixp_conv_layer_weights1 |                                                                      |
+| s_axi_control | fixp_conv_layer_bias1_1    | 0x28   | 32    | W      | Data signal of fixp_conv_layer_bias1    |                                                                      |
+| s_axi_control | fixp_conv_layer_bias1_2    | 0x2c   | 32    | W      | Data signal of fixp_conv_layer_bias1    |                                                                      |
+| s_axi_control | fixp_conv_layer_weights2_1 | 0x34   | 32    | W      | Data signal of fixp_conv_layer_weights2 |                                                                      |
+| s_axi_control | fixp_conv_layer_weights2_2 | 0x38   | 32    | W      | Data signal of fixp_conv_layer_weights2 |                                                                      |
+| s_axi_control | fixp_conv_layer_bias2_1    | 0x40   | 32    | W      | Data signal of fixp_conv_layer_bias2    |                                                                      |
+| s_axi_control | fixp_conv_layer_bias2_2    | 0x44   | 32    | W      | Data signal of fixp_conv_layer_bias2    |                                                                      |
+| s_axi_control | fixp_conv_layer_weights3_1 | 0x4c   | 32    | W      | Data signal of fixp_conv_layer_weights3 |                                                                      |
+| s_axi_control | fixp_conv_layer_weights3_2 | 0x50   | 32    | W      | Data signal of fixp_conv_layer_weights3 |                                                                      |
+| s_axi_control | fixp_conv_layer_bias3_1    | 0x58   | 32    | W      | Data signal of fixp_conv_layer_bias3    |                                                                      |
+| s_axi_control | fixp_conv_layer_bias3_2    | 0x5c   | 32    | W      | Data signal of fixp_conv_layer_bias3    |                                                                      |
+| s_axi_control | fixp_conv_layer_weights4_1 | 0x64   | 32    | W      | Data signal of fixp_conv_layer_weights4 |                                                                      |
+| s_axi_control | fixp_conv_layer_weights4_2 | 0x68   | 32    | W      | Data signal of fixp_conv_layer_weights4 |                                                                      |
+| s_axi_control | fixp_conv_layer_bias4_1    | 0x70   | 32    | W      | Data signal of fixp_conv_layer_bias4    |                                                                      |
+| s_axi_control | fixp_conv_layer_bias4_2    | 0x74   | 32    | W      | Data signal of fixp_conv_layer_bias4    |                                                                      |
+| s_axi_control | fixp_dense1_weights_1      | 0x7c   | 32    | W      | Data signal of fixp_dense1_weights      |                                                                      |
+| s_axi_control | fixp_dense1_weights_2      | 0x80   | 32    | W      | Data signal of fixp_dense1_weights      |                                                                      |
+| s_axi_control | fixp_dense1_bias_1         | 0x88   | 32    | W      | Data signal of fixp_dense1_bias         |                                                                      |
+| s_axi_control | fixp_dense1_bias_2         | 0x8c   | 32    | W      | Data signal of fixp_dense1_bias         |                                                                      |
+| s_axi_control | fixp_dense2_weights_1      | 0x94   | 32    | W      | Data signal of fixp_dense2_weights      |                                                                      |
+| s_axi_control | fixp_dense2_weights_2      | 0x98   | 32    | W      | Data signal of fixp_dense2_weights      |                                                                      |
+| s_axi_control | fixp_dense2_bias_1         | 0xa0   | 32    | W      | Data signal of fixp_dense2_bias         |                                                                      |
+| s_axi_control | fixp_dense2_bias_2         | 0xa4   | 32    | W      | Data signal of fixp_dense2_bias         |                                                                      |
+| s_axi_control | output_feature_map_1       | 0xac   | 32    | W      | Data signal of output_feature_map       |                                                                      |
+| s_axi_control | output_feature_map_2       | 0xb0   | 32    | W      | Data signal of output_feature_map       |                                                                      |
++---------------+----------------------------+--------+-------+--------+-----------------------------------------+----------------------------------------------------------------------+
+
+* TOP LEVEL CONTROL
++-----------+------------+-----------+
+| Interface | Type       | Ports     |
++-----------+------------+-----------+
+| ap_clk    | clock      | ap_clk    |
+| ap_rst_n  | reset      | ap_rst_n  |
+| interrupt | interrupt  | interrupt |
+| ap_ctrl   | ap_ctrl_hs |           |
++-----------+------------+-----------+
+
+
+================================================================
+== SW I/O Information
+================================================================
+* Top Function Arguments
++--------------------------+-----------+----------+
+| Argument                 | Direction | Datatype |
++--------------------------+-----------+----------+
+| input_feature_map        | inout     | float*   |
+| fixp_conv_layer_weights1 | in        | float*   |
+| fixp_conv_layer_bias1    | in        | float*   |
+| fixp_conv_layer_weights2 | in        | float*   |
+| fixp_conv_layer_bias2    | in        | float*   |
+| fixp_conv_layer_weights3 | in        | float*   |
+| fixp_conv_layer_bias3    | in        | float*   |
+| fixp_conv_layer_weights4 | in        | float*   |
+| fixp_conv_layer_bias4    | in        | float*   |
+| fixp_dense1_weights      | in        | float*   |
+| fixp_dense1_bias         | in        | float*   |
+| fixp_dense2_weights      | in        | float*   |
+| fixp_dense2_bias         | in        | float*   |
+| output_feature_map       | inout     | float*   |
++--------------------------+-----------+----------+
+
+* SW-to-HW Mapping
++--------------------------+----------------+-----------+----------+------------------------------------------------------+
+| Argument                 | HW Interface   | HW Type   | HW Usage | HW Info                                              |
++--------------------------+----------------+-----------+----------+------------------------------------------------------+
+| input_feature_map        | m_axi_fm       | interface |          |                                                      |
+| input_feature_map        | s_axi_control  | register  | offset   | name=input_feature_map_1 offset=0x10 range=32        |
+| input_feature_map        | s_axi_control  | register  | offset   | name=input_feature_map_2 offset=0x14 range=32        |
+| fixp_conv_layer_weights1 | m_axi_c_weight | interface |          |                                                      |
+| fixp_conv_layer_weights1 | s_axi_control  | register  | offset   | name=fixp_conv_layer_weights1_1 offset=0x1c range=32 |
+| fixp_conv_layer_weights1 | s_axi_control  | register  | offset   | name=fixp_conv_layer_weights1_2 offset=0x20 range=32 |
+| fixp_conv_layer_bias1    | m_axi_c_bias   | interface |          |                                                      |
+| fixp_conv_layer_bias1    | s_axi_control  | register  | offset   | name=fixp_conv_layer_bias1_1 offset=0x28 range=32    |
+| fixp_conv_layer_bias1    | s_axi_control  | register  | offset   | name=fixp_conv_layer_bias1_2 offset=0x2c range=32    |
+| fixp_conv_layer_weights2 | m_axi_c_weight | interface |          |                                                      |
+| fixp_conv_layer_weights2 | s_axi_control  | register  | offset   | name=fixp_conv_layer_weights2_1 offset=0x34 range=32 |
+| fixp_conv_layer_weights2 | s_axi_control  | register  | offset   | name=fixp_conv_layer_weights2_2 offset=0x38 range=32 |
+| fixp_conv_layer_bias2    | m_axi_c_bias   | interface |          |                                                      |
+| fixp_conv_layer_bias2    | s_axi_control  | register  | offset   | name=fixp_conv_layer_bias2_1 offset=0x40 range=32    |
+| fixp_conv_layer_bias2    | s_axi_control  | register  | offset   | name=fixp_conv_layer_bias2_2 offset=0x44 range=32    |
+| fixp_conv_layer_weights3 | m_axi_c_weight | interface |          |                                                      |
+| fixp_conv_layer_weights3 | s_axi_control  | register  | offset   | name=fixp_conv_layer_weights3_1 offset=0x4c range=32 |
+| fixp_conv_layer_weights3 | s_axi_control  | register  | offset   | name=fixp_conv_layer_weights3_2 offset=0x50 range=32 |
+| fixp_conv_layer_bias3    | m_axi_c_bias   | interface |          |                                                      |
+| fixp_conv_layer_bias3    | s_axi_control  | register  | offset   | name=fixp_conv_layer_bias3_1 offset=0x58 range=32    |
+| fixp_conv_layer_bias3    | s_axi_control  | register  | offset   | name=fixp_conv_layer_bias3_2 offset=0x5c range=32    |
+| fixp_conv_layer_weights4 | m_axi_c_weight | interface |          |                                                      |
+| fixp_conv_layer_weights4 | s_axi_control  | register  | offset   | name=fixp_conv_layer_weights4_1 offset=0x64 range=32 |
+| fixp_conv_layer_weights4 | s_axi_control  | register  | offset   | name=fixp_conv_layer_weights4_2 offset=0x68 range=32 |
+| fixp_conv_layer_bias4    | m_axi_c_bias   | interface |          |                                                      |
+| fixp_conv_layer_bias4    | s_axi_control  | register  | offset   | name=fixp_conv_layer_bias4_1 offset=0x70 range=32    |
+| fixp_conv_layer_bias4    | s_axi_control  | register  | offset   | name=fixp_conv_layer_bias4_2 offset=0x74 range=32    |
+| fixp_dense1_weights      | m_axi_dense    | interface |          |                                                      |
+| fixp_dense1_weights      | s_axi_control  | register  | offset   | name=fixp_dense1_weights_1 offset=0x7c range=32      |
+| fixp_dense1_weights      | s_axi_control  | register  | offset   | name=fixp_dense1_weights_2 offset=0x80 range=32      |
+| fixp_dense1_bias         | m_axi_dense    | interface |          |                                                      |
+| fixp_dense1_bias         | s_axi_control  | register  | offset   | name=fixp_dense1_bias_1 offset=0x88 range=32         |
+| fixp_dense1_bias         | s_axi_control  | register  | offset   | name=fixp_dense1_bias_2 offset=0x8c range=32         |
+| fixp_dense2_weights      | m_axi_dense    | interface |          |                                                      |
+| fixp_dense2_weights      | s_axi_control  | register  | offset   | name=fixp_dense2_weights_1 offset=0x94 range=32      |
+| fixp_dense2_weights      | s_axi_control  | register  | offset   | name=fixp_dense2_weights_2 offset=0x98 range=32      |
+| fixp_dense2_bias         | m_axi_dense    | interface |          |                                                      |
+| fixp_dense2_bias         | s_axi_control  | register  | offset   | name=fixp_dense2_bias_1 offset=0xa0 range=32         |
+| fixp_dense2_bias         | s_axi_control  | register  | offset   | name=fixp_dense2_bias_2 offset=0xa4 range=32         |
+| output_feature_map       | m_axi_fm       | interface |          |                                                      |
+| output_feature_map       | s_axi_control  | register  | offset   | name=output_feature_map_1 offset=0xac range=32       |
+| output_feature_map       | s_axi_control  | register  | offset   | name=output_feature_map_2 offset=0xb0 range=32       |
++--------------------------+----------------+-----------+----------+------------------------------------------------------+
+
+
+================================================================
+== M_AXI Burst Information
+================================================================
+ Note: All burst requests might be further partitioned into multiple requests during RTL generation based on max_read_burst_length or max_write_burst_length settings.
+
+* Inferred Burst Summary
++----------------+---------------------+-----------+--------+-------+-------------------+
+| HW Interface   | Loop                | Direction | Length | Width | Location          |
++----------------+---------------------+-----------+--------+-------+-------------------+
+| m_axi_c_bias   | conv1d_1a           | read      | 32     | 32    | conv1d.cpp:32:5   |
+| m_axi_c_bias   | conv1d_2b           | read      | 32     | 32    | conv1d.cpp:83:5   |
+| m_axi_c_bias   | conv1d_3b           | read      | 32     | 32    | conv1d.cpp:129:5  |
+| m_axi_dense    | dense1_a            | read      | 32     | 32    | conv1d.cpp:353:5  |
+| m_axi_dense    | dense2_a            | read      | 5      | 32    | conv1d.cpp:383:5  |
+| m_axi_fm       | load_input          | read      | 187    | 32    | conv1d.cpp:453:5  |
+| m_axi_c_weight | load_conv_weights1  | read      | 160    | 32    | conv1d.cpp:458:5  |
+| m_axi_c_weight | load_conv_weights2  | read      | 5120   | 32    | conv1d.cpp:465:5  |
+| m_axi_c_weight | load_conv_weights3  | read      | 5120   | 32    | conv1d.cpp:474:5  |
+| m_axi_c_weight | load_conv_weights4  | read      | 5120   | 32    | conv1d.cpp:483:5  |
+| m_axi_dense    | load_dense1_weights | read      | 2048   | 32    | conv1d.cpp:492:5  |
+| m_axi_dense    | load_dense2_weights | read      | 160    | 32    | conv1d.cpp:499:5  |
+| m_axi_fm       | VITIS_LOOP_549_10   | write     | 5      | 32    | conv1d.cpp:549:24 |
++----------------+---------------------+-----------+--------+-------+-------------------+
+
+* Inferred Bursts and Widening Missed
++---------------------+--------------------------+-------------------+---------------------------------------------------------------------------------------------------------+------------+-------------------+
+| HW Interface        | Variable                 | Loop              | Problem                                                                                                 | Resolution | Location          |
++---------------------+--------------------------+-------------------+---------------------------------------------------------------------------------------------------------+------------+-------------------+
+| m_axi_c_bias        | B_buf                    | conv1d_2a         | Could not analyze pattern                                                                               | 214-229    | conv1d.cpp:81:1   |
+| m_axi_c_bias,c_bias | B_buf                    | conv1d_3a         | Could not analyze pattern                                                                               | 214-229    | conv1d.cpp:127:1  |
+| m_axi_dense         | fixp_dense1_bias         | dense1_a          | Could not widen since type float size is greater than or equal to the max_widen_bitwidth threshold of 0 | 214-353    | conv1d.cpp:353:5  |
+| m_axi_dense         | fixp_dense2_bias         | dense2_a          | Could not widen since type float size is greater than or equal to the max_widen_bitwidth threshold of 0 | 214-353    | conv1d.cpp:383:5  |
+| m_axi_fm            | output_feature_map       | VITIS_LOOP_549_10 | Could not widen since type float size is greater than or equal to the max_widen_bitwidth threshold of 0 | 214-353    | conv1d.cpp:549:24 |
+| m_axi_dense         | fixp_dense2_weights      | VITIS_LOOP_500_9  | Could not widen since type float size is greater than or equal to the max_widen_bitwidth threshold of 0 | 214-353    | conv1d.cpp:500:27 |
+| m_axi_dense         | fixp_dense1_weights      | VITIS_LOOP_493_8  | Could not widen since type float size is greater than or equal to the max_widen_bitwidth threshold of 0 | 214-353    | conv1d.cpp:493:27 |
+| m_axi_c_weight      | fixp_conv_layer_weights4 | VITIS_LOOP_485_7  | Could not widen since type float size is greater than or equal to the max_widen_bitwidth threshold of 0 | 214-353    | conv1d.cpp:485:31 |
+| m_axi_c_weight      | fixp_conv_layer_weights3 | VITIS_LOOP_476_5  | Could not widen since type float size is greater than or equal to the max_widen_bitwidth threshold of 0 | 214-353    | conv1d.cpp:476:31 |
+| m_axi_c_weight      | fixp_conv_layer_weights2 | VITIS_LOOP_467_3  | Could not widen since type float size is greater than or equal to the max_widen_bitwidth threshold of 0 | 214-353    | conv1d.cpp:467:31 |
+| m_axi_c_weight      | fixp_conv_layer_weights1 | VITIS_LOOP_459_1  | Could not widen since type float size is greater than or equal to the max_widen_bitwidth threshold of 0 | 214-353    | conv1d.cpp:459:27 |
+| m_axi_fm            | input_feature_map        | load_input        | Could not widen since type float size is greater than or equal to the max_widen_bitwidth threshold of 0 | 214-353    | conv1d.cpp:453:5  |
+| m_axi_c_bias        | B_buf                    | conv1d_1a         | Could not widen since type float size is greater than or equal to the max_widen_bitwidth threshold of 0 | 214-353    | conv1d.cpp:32:5   |
+| m_axi_c_bias        | B_buf                    | conv1d_2b         | Could not widen since type float size is greater than or equal to the max_widen_bitwidth threshold of 0 | 214-353    | conv1d.cpp:83:5   |
+| m_axi_c_bias,c_bias | B_buf                    | conv1d_3b         | Could not widen since type float size is greater than or equal to the max_widen_bitwidth threshold of 0 | 214-353    | conv1d.cpp:129:5  |
++---------------------+--------------------------+-------------------+---------------------------------------------------------------------------------------------------------+------------+-------------------+
+
+    * Resolution URL: www.xilinx.com/cgi-bin/docs/rdoc?v=2022.1;t=hls+guidance;d=XXX-YYY.html (replace XXX-YYY with column value)
+
+================================================================
+== Bind Op Report
+================================================================
++-----------------------------------------------------------------------------+-----+--------+-------------+------+---------+---------+
+| Name                                                                        | DSP | Pragma | Variable    | Op   | Impl    | Latency |
++-----------------------------------------------------------------------------+-----+--------+-------------+------+---------+---------+
+| + tiled_conv                                                                | 45  |        |             |      |         |         |
+|  + tiled_conv_Pipeline_load_input                                           | 0   |        |             |      |         |         |
+|    add_ln453_fu_192_p2                                                      | -   |        | add_ln453   | add  | fabric  | 0       |
+|    add_ln454_fu_219_p2                                                      | -   |        | add_ln454   | add  | fabric  | 0       |
+|    add_ln453_1_fu_251_p2                                                    | -   |        | add_ln453_1 | add  | fabric  | 0       |
+|  + tiled_conv_Pipeline_load_conv_weights1_VITIS_LOOP_459_1                  | 0   |        |             |      |         |         |
+|    add_ln458_1_fu_190_p2                                                    | -   |        | add_ln458_1 | add  | fabric  | 0       |
+|    add_ln458_fu_213_p2                                                      | -   |        | add_ln458   | add  | fabric  | 0       |
+|    add_ln459_fu_258_p2                                                      | -   |        | add_ln459   | add  | fabric  | 0       |
+|  + tiled_conv_Pipeline_load_dense1_weights_VITIS_LOOP_493_8                 | 0   |        |             |      |         |         |
+|    add_ln492_1_fu_128_p2                                                    | -   |        | add_ln492_1 | add  | fabric  | 0       |
+|    add_ln492_fu_151_p2                                                      | -   |        | add_ln492   | add  | fabric  | 0       |
+|    add_ln494_fu_195_p2                                                      | -   |        | add_ln494   | add  | fabric  | 0       |
+|    add_ln493_fu_201_p2                                                      | -   |        | add_ln493   | add  | fabric  | 0       |
+|  + tiled_conv_Pipeline_13                                                   | 0   |        |             |      |         |         |
+|    empty_82_fu_58_p2                                                        | -   |        | empty_82    | add  | fabric  | 0       |
+|  + tiled_conv_Pipeline_load_conv_weights2_VITIS_LOOP_466_2_VITIS_LOOP_467_3 | 0   |        |             |      |         |         |
+|    add_ln465_1_fu_222_p2                                                    | -   |        | add_ln465_1 | add  | fabric  | 0       |
+|    add_ln465_fu_279_p2                                                      | -   |        | add_ln465   | add  | fabric  | 0       |
+|    add_ln466_fu_320_p2                                                      | -   |        | add_ln466   | add  | fabric  | 0       |
+|    empty_77_fu_378_p2                                                       | -   |        | empty_77    | add  | fabric  | 0       |
+|    add_ln467_fu_347_p2                                                      | -   |        | add_ln467   | add  | fabric  | 0       |
+|    add_ln466_1_fu_240_p2                                                    | -   |        | add_ln466_1 | add  | fabric  | 0       |
+|  + tiled_conv_Pipeline_load_dense2_weights_VITIS_LOOP_500_9                 | 0   |        |             |      |         |         |
+|    add_ln499_1_fu_130_p2                                                    | -   |        | add_ln499_1 | add  | fabric  | 0       |
+|    add_ln499_fu_153_p2                                                      | -   |        | add_ln499   | add  | fabric  | 0       |
+|    add_ln501_fu_207_p2                                                      | -   |        | add_ln501   | add  | fabric  | 0       |
+|    add_ln500_fu_181_p2                                                      | -   |        | add_ln500   | add  | fabric  | 0       |
+|  + conv1d_1                                                                 | 15  |        |             |      |         |         |
+|    add_ln32_1_fu_236_p2                                                     | -   |        | add_ln32_1  | add  | fabric  | 0       |
+|    add_ln32_fu_248_p2                                                       | -   |        | add_ln32    | add  | fabric  | 0       |
+|   + conv1d_1_Pipeline_conv1d_1b                                             | 15  |        |             |      |         |         |
+|     add_ln42_fu_607_p2                                                      | -   |        | add_ln42    | add  | fabric  | 0       |
+|     empty_110_fu_904_p2                                                     | -   |        | empty_110   | add  | fabric  | 0       |
+|     add_ln48_fu_633_p2                                                      | -   |        | add_ln48    | add  | fabric  | 0       |
+|     mul_8ns_10ns_17_1_1_U54                                                 | -   |        | mul_ln48    | mul  | auto    | 0       |
+|     add_ln42_1_fu_659_p2                                                    | -   |        | add_ln42_1  | add  | fabric  | 0       |
+|     mul_9ns_66ns_73_5_1_U57                                                 | 3   |        | mul_ln48_1  | mul  | auto    | 4       |
+|     fmul_32ns_32ns_32_4_max_dsp_1_U52                                       | 3   |        | mul_1       | fmul | maxdsp  | 3       |
+|     add_ln42_2_fu_674_p2                                                    | -   |        | add_ln42_2  | add  | fabric  | 0       |
+|     add_ln48_1_fu_680_p2                                                    | -   |        | add_ln48_1  | add  | fabric  | 0       |
+|     mul_8ns_10ns_17_1_1_U55                                                 | -   |        | mul_ln48_2  | mul  | auto    | 0       |
+|     fadd_32ns_32ns_32_5_full_dsp_1_U45                                      | 2   |        | storemerge2 | fadd | fulldsp | 4       |
+|     mul_8ns_10ns_17_1_1_U56                                                 | -   |        | mul_ln48_3  | mul  | auto    | 0       |
+|     fmul_32ns_32ns_32_4_max_dsp_1_U51                                       | 3   |        | mul_4       | fmul | maxdsp  | 3       |
+|     add_ln44_fu_831_p2                                                      | -   |        | add_ln44    | add  | fabric  | 0       |
+|     fadd_32ns_32ns_32_5_full_dsp_1_U46                                      | 2   |        | tmp_s       | fadd | fulldsp | 4       |
+|     fadd_32ns_32ns_32_5_full_dsp_1_U47                                      | 2   |        | add         | fadd | fulldsp | 4       |
+|  + tiled_conv_Pipeline_load_conv_weights3_VITIS_LOOP_475_4_VITIS_LOOP_476_5 | 0   |        |             |      |         |         |
+|    add_ln474_1_fu_222_p2                                                    | -   |        | add_ln474_1 | add  | fabric  | 0       |
+|    add_ln474_fu_279_p2                                                      | -   |        | add_ln474   | add  | fabric  | 0       |
+|    add_ln475_fu_320_p2                                                      | -   |        | add_ln475   | add  | fabric  | 0       |
+|    empty_75_fu_378_p2                                                       | -   |        | empty_75    | add  | fabric  | 0       |
+|    add_ln476_fu_347_p2                                                      | -   |        | add_ln476   | add  | fabric  | 0       |
+|    add_ln475_1_fu_240_p2                                                    | -   |        | add_ln475_1 | add  | fabric  | 0       |
+|  + tiled_conv_Pipeline_VITIS_LOOP_167_1_VITIS_LOOP_169_2                    | 1   |        |             |      |         |         |
+|    add_ln167_1_fu_255_p2                                                    | -   |        | add_ln167_1 | add  | fabric  | 0       |
+|    add_ln167_fu_264_p2                                                      | -   |        | add_ln167   | add  | fabric  | 0       |
+|    mul_6ns_9ns_13_1_1_U103                                                  | -   |        | mul_ln187_2 | mul  | auto    | 0       |
+|    mac_muladd_6ns_5ns_5ns_10_4_1_U106                                       | 1   |        | mul_ln187   | mul  | dsp48   | 3       |
+|    add_ln177_fu_313_p2                                                      | -   |        | add_ln177   | add  | fabric  | 0       |
+|    add_ln177_1_fu_333_p2                                                    | -   |        | add_ln177_1 | add  | fabric  | 0       |
+|    add_ln176_fu_415_p2                                                      | -   |        | add_ln176   | add  | fabric  | 0       |
+|    add_ln177_2_fu_424_p2                                                    | -   |        | add_ln177_2 | add  | fabric  | 0       |
+|    add_ln176_1_fu_434_p2                                                    | -   |        | add_ln176_1 | add  | fabric  | 0       |
+|    add_ln177_3_fu_443_p2                                                    | -   |        | add_ln177_3 | add  | fabric  | 0       |
+|    add_ln176_2_fu_453_p2                                                    | -   |        | add_ln176_2 | add  | fabric  | 0       |
+|    add_ln177_4_fu_462_p2                                                    | -   |        | add_ln177_4 | add  | fabric  | 0       |
+|    mul_7ns_9ns_15_1_1_U105                                                  | -   |        | mul_ln187_1 | mul  | auto    | 0       |
+|    mac_muladd_6ns_5ns_5ns_10_4_1_U106                                       | 1   |        | add_ln187   | add  | dsp48   | 3       |
+|    add_ln169_fu_357_p2                                                      | -   |        | add_ln169   | add  | fabric  | 0       |
+|  + conv1d_2                                                                 | 3   |        |             |      |         |         |
+|    add_ln81_1_fu_270_p2                                                     | -   |        | add_ln81_1  | add  | fabric  | 0       |
+|    add_ln81_fu_282_p2                                                       | -   |        | add_ln81    | add  | fabric  | 0       |
+|    mul_6ns_6ns_10_1_1_U152                                                  | -   |        | mul_ln83    | mul  | auto    | 0       |
+|    mul_6ns_8ns_12_1_1_U153                                                  | -   |        | empty_106   | mul  | auto    | 0       |
+|    empty_107_fu_358_p2                                                      | -   |        | empty_107   | add  | fabric  | 0       |
+|    add_ln83_fu_373_p2                                                       | -   |        | add_ln83    | add  | fabric  | 0       |
+|   + conv1d_2_Pipeline_conv1d_2c                                             | 3   |        |             |      |         |         |
+|     add_ln89_fu_601_p2                                                      | -   |        | add_ln89    | add  | fabric  | 0       |
+|     empty_104_fu_924_p2                                                     | -   |        | empty_104   | add  | fabric  | 0       |
+|     add_ln92_fu_627_p2                                                      | -   |        | add_ln92    | add  | fabric  | 0       |
+|     mul_7ns_9ns_15_1_1_U124                                                 | -   |        | mul_ln92_1  | mul  | auto    | 0       |
+|     add_ln92_1_fu_700_p2                                                    | -   |        | add_ln92_1  | add  | fabric  | 0       |
+|     add_ln89_1_fu_653_p2                                                    | -   |        | add_ln89_1  | add  | fabric  | 0       |
+|     mul_8ns_66ns_72_5_1_U126                                                | 3   |        | mul_ln92_2  | mul  | auto    | 4       |
+|     add_ln92_2_fu_947_p2                                                    | -   |        | add_ln92_2  | add  | fabric  | 0       |
+|     add_ln89_2_fu_726_p2                                                    | -   |        | add_ln89_2  | add  | fabric  | 0       |
+|     add_ln92_6_fu_849_p2                                                    | -   |        | add_ln92_6  | add  | fabric  | 0       |
+|     add_ln92_3_fu_745_p2                                                    | -   |        | add_ln92_3  | add  | fabric  | 0       |
+|     mul_7ns_9ns_15_1_1_U125                                                 | -   |        | mul_ln92_3  | mul  | auto    | 0       |
+|     add_ln92_4_fu_762_p2                                                    | -   |        | add_ln92_4  | add  | fabric  | 0       |
+|     mul_7ns_9ns_15_1_1_U127                                                 | -   |        | mul_ln92_4  | mul  | auto    | 0       |
+|     add_ln92_5_fu_887_p2                                                    | -   |        | add_ln92_5  | add  | fabric  | 0       |
+|     add_ln90_fu_805_p2                                                      | -   |        | add_ln90    | add  | fabric  | 0       |
+|  + tiled_conv_Pipeline_load_conv_weights4_VITIS_LOOP_484_6_VITIS_LOOP_485_7 | 0   |        |             |      |         |         |
+|    add_ln483_1_fu_222_p2                                                    | -   |        | add_ln483_1 | add  | fabric  | 0       |
+|    add_ln483_fu_279_p2                                                      | -   |        | add_ln483   | add  | fabric  | 0       |
+|    add_ln484_fu_320_p2                                                      | -   |        | add_ln484   | add  | fabric  | 0       |
+|    empty_73_fu_378_p2                                                       | -   |        | empty_73    | add  | fabric  | 0       |
+|    add_ln485_fu_347_p2                                                      | -   |        | add_ln485   | add  | fabric  | 0       |
+|    add_ln484_1_fu_240_p2                                                    | -   |        | add_ln484_1 | add  | fabric  | 0       |
+|  + tiled_conv_Pipeline_VITIS_LOOP_200_1_VITIS_LOOP_202_2                    | 1   |        |             |      |         |         |
+|    add_ln200_1_fu_173_p2                                                    | -   |        | add_ln200_1 | add  | fabric  | 0       |
+|    add_ln200_fu_185_p2                                                      | -   |        | add_ln200   | add  | fabric  | 0       |
+|    mul_6ns_8ns_12_1_1_U178                                                  | -   |        | mul_ln220_1 | mul  | auto    | 0       |
+|    mac_muladd_6ns_6ns_6ns_11_4_1_U179                                       | 1   |        | mul_ln220   | mul  | dsp48   | 3       |
+|    mac_muladd_6ns_6ns_6ns_11_4_1_U179                                       | 1   |        | add_ln220   | add  | dsp48   | 3       |
+|    add_ln210_fu_243_p2                                                      | -   |        | add_ln210   | add  | fabric  | 0       |
+|    add_ln210_1_fu_263_p2                                                    | -   |        | add_ln210_1 | add  | fabric  | 0       |
+|    add_ln209_fu_331_p2                                                      | -   |        | add_ln209   | add  | fabric  | 0       |
+|    add_ln210_2_fu_340_p2                                                    | -   |        | add_ln210_2 | add  | fabric  | 0       |
+|    add_ln209_1_fu_350_p2                                                    | -   |        | add_ln209_1 | add  | fabric  | 0       |
+|    add_ln210_3_fu_359_p2                                                    | -   |        | add_ln210_3 | add  | fabric  | 0       |
+|    add_ln209_2_fu_369_p2                                                    | -   |        | add_ln209_2 | add  | fabric  | 0       |
+|    add_ln210_4_fu_378_p2                                                    | -   |        | add_ln210_4 | add  | fabric  | 0       |
+|    add_ln202_fu_273_p2                                                      | -   |        | add_ln202   | add  | fabric  | 0       |
+|  + conv1d_3_4                                                               | 10  |        |             |      |         |         |
+|    add_ln127_1_fu_247_p2                                                    | -   |        | add_ln127_1 | add  | fabric  | 0       |
+|    add_ln127_fu_259_p2                                                      | -   |        | add_ln127   | add  | fabric  | 0       |
+|    mul_6ns_7ns_11_1_1_U201                                                  | -   |        | mul_ln129   | mul  | auto    | 0       |
+|    mul_6ns_7ns_11_1_1_U202                                                  | -   |        | empty_100   | mul  | auto    | 0       |
+|    empty_101_fu_316_p2                                                      | -   |        | empty_101   | add  | fabric  | 0       |
+|    add_ln129_fu_331_p2                                                      | -   |        | add_ln129   | add  | fabric  | 0       |
+|   + conv1d_3_4_Pipeline_conv1d_3c                                           | 10  |        |             |      |         |         |
+|     add_ln135_fu_347_p2                                                     | -   |        | add_ln135   | add  | fabric  | 0       |
+|     empty_98_fu_355_p2                                                      | -   |        | empty_98    | add  | fabric  | 0       |
+|     add_ln138_1_fu_365_p2                                                   | -   |        | add_ln138_1 | add  | fabric  | 0       |
+|     add_ln138_fu_293_p2                                                     | -   |        | add_ln138   | add  | fabric  | 0       |
+|     add_ln138_2_fu_303_p2                                                   | -   |        | add_ln138_2 | add  | fabric  | 0       |
+|     fmul_32ns_32ns_32_4_max_dsp_1_U185                                      | 3   |        | mul         | fmul | maxdsp  | 3       |
+|     fadd_32ns_32ns_32_5_full_dsp_1_U183                                     | 2   |        | storemerge  | fadd | fulldsp | 4       |
+|     add_ln138_3_fu_394_p2                                                   | -   |        | add_ln138_3 | add  | fabric  | 0       |
+|     add_ln135_1_fu_314_p2                                                   | -   |        | add_ln135_1 | add  | fabric  | 0       |
+|     add_ln138_4_fu_324_p2                                                   | -   |        | add_ln138_4 | add  | fabric  | 0       |
+|     fmul_32ns_32ns_32_4_max_dsp_1_U186                                      | 3   |        | mul_1       | fmul | maxdsp  | 3       |
+|     fadd_32ns_32ns_32_5_full_dsp_1_U183                                     | 2   |        | storemerge1 | fadd | fulldsp | 4       |
+|     add_ln135_2_fu_409_p2                                                   | -   |        | add_ln135_2 | add  | fabric  | 0       |
+|     add_ln138_5_fu_418_p2                                                   | -   |        | add_ln138_5 | add  | fabric  | 0       |
+|     fmul_32ns_32ns_32_4_max_dsp_1_U185                                      | 3   |        | mul_2       | fmul | maxdsp  | 3       |
+|     fadd_32ns_32ns_32_5_full_dsp_1_U183                                     | 2   |        | add37_2     | fadd | fulldsp | 4       |
+|     fmul_32ns_32ns_32_4_max_dsp_1_U186                                      | 3   |        | mul_3       | fmul | maxdsp  | 3       |
+|     fadd_32ns_32ns_32_5_full_dsp_1_U184                                     | 2   |        | storemerge2 | fadd | fulldsp | 4       |
+|     fmul_32ns_32ns_32_4_max_dsp_1_U185                                      | 3   |        | mul_4       | fmul | maxdsp  | 3       |
+|     fadd_32ns_32ns_32_5_full_dsp_1_U184                                     | 2   |        | tmp         | fadd | fulldsp | 4       |
+|     fadd_32ns_32ns_32_5_full_dsp_1_U184                                     | 2   |        | add         | fadd | fulldsp | 4       |
+|  + tiled_conv_Pipeline_VITIS_LOOP_233_1_VITIS_LOOP_235_2                    | 0   |        |             |      |         |         |
+|    add_ln233_1_fu_181_p2                                                    | -   |        | add_ln233_1 | add  | fabric  | 0       |
+|    add_ln233_fu_193_p2                                                      | -   |        | add_ln233   | add  | fabric  | 0       |
+|    mul_6ns_7ns_11_1_1_U215                                                  | -   |        | mul_ln243   | mul  | auto    | 0       |
+|    add_ln243_fu_251_p2                                                      | -   |        | add_ln243   | add  | fabric  | 0       |
+|    add_ln243_1_fu_271_p2                                                    | -   |        | add_ln243_1 | add  | fabric  | 0       |
+|    add_ln242_fu_339_p2                                                      | -   |        | add_ln242   | add  | fabric  | 0       |
+|    add_ln243_2_fu_348_p2                                                    | -   |        | add_ln243_2 | add  | fabric  | 0       |
+|    add_ln242_1_fu_358_p2                                                    | -   |        | add_ln242_1 | add  | fabric  | 0       |
+|    add_ln243_3_fu_367_p2                                                    | -   |        | add_ln243_3 | add  | fabric  | 0       |
+|    add_ln242_2_fu_377_p2                                                    | -   |        | add_ln242_2 | add  | fabric  | 0       |
+|    add_ln243_4_fu_386_p2                                                    | -   |        | add_ln243_4 | add  | fabric  | 0       |
+|    add_ln235_fu_281_p2                                                      | -   |        | add_ln235   | add  | fabric  | 0       |
+|  + tiled_conv_Pipeline_VITIS_LOOP_266_1_VITIS_LOOP_268_2                    | 0   |        |             |      |         |         |
+|    add_ln266_1_fu_177_p2                                                    | -   |        | add_ln266_1 | add  | fabric  | 0       |
+|    add_ln266_fu_189_p2                                                      | -   |        | add_ln266   | add  | fabric  | 0       |
+|    add_ln276_fu_247_p2                                                      | -   |        | add_ln276   | add  | fabric  | 0       |
+|    add_ln286_fu_363_p2                                                      | -   |        | add_ln286   | add  | fabric  | 0       |
+|    add_ln276_1_fu_263_p2                                                    | -   |        | add_ln276_1 | add  | fabric  | 0       |
+|    add_ln276_2_fu_284_p2                                                    | -   |        | add_ln276_2 | add  | fabric  | 0       |
+|    add_ln275_fu_372_p2                                                      | -   |        | add_ln275   | add  | fabric  | 0       |
+|    add_ln276_3_fu_382_p2                                                    | -   |        | add_ln276_3 | add  | fabric  | 0       |
+|    add_ln275_1_fu_392_p2                                                    | -   |        | add_ln275_1 | add  | fabric  | 0       |
+|    add_ln276_4_fu_402_p2                                                    | -   |        | add_ln276_4 | add  | fabric  | 0       |
+|    add_ln275_2_fu_412_p2                                                    | -   |        | add_ln275_2 | add  | fabric  | 0       |
+|    add_ln276_5_fu_422_p2                                                    | -   |        | add_ln276_5 | add  | fabric  | 0       |
+|    add_ln268_fu_295_p2                                                      | -   |        | add_ln268   | add  | fabric  | 0       |
+|  + tiled_conv_Pipeline_VITIS_LOOP_299_1_VITIS_LOOP_301_2                    | 0   |        |             |      |         |         |
+|    add_ln299_1_fu_350_p2                                                    | -   |        | add_ln299_1 | add  | fabric  | 0       |
+|    add_ln299_fu_362_p2                                                      | -   |        | add_ln299   | add  | fabric  | 0       |
+|    add_ln308_fu_511_p2                                                      | -   |        | add_ln308   | add  | fabric  | 0       |
+|    add_ln308_1_fu_529_p2                                                    | -   |        | add_ln308_1 | add  | fabric  | 0       |
+|    add_ln301_fu_450_p2                                                      | -   |        | add_ln301   | add  | fabric  | 0       |
+|  + dense1                                                                   | 0   |        |             |      |         |         |
+|    add_ln353_fu_358_p2                                                      | -   |        | add_ln353   | add  | fabric  | 0       |
+|    add_ln358_fu_631_p2                                                      | -   |        | add_ln358   | add  | fabric  | 0       |
+|    add_ln357_fu_647_p2                                                      | -   |        | add_ln357   | add  | fabric  | 0       |
+|    add_ln365_fu_741_p2                                                      | -   |        | add_ln365   | add  | fabric  | 0       |
+|  + dense2                                                                   | 0   |        |             |      |         |         |
+|    add_ln383_fu_209_p2                                                      | -   |        | add_ln383   | add  | fabric  | 0       |
+|    add_ln388_fu_226_p2                                                      | -   |        | add_ln388   | add  | fabric  | 0       |
+|    add_ln387_fu_242_p2                                                      | -   |        | add_ln387   | add  | fabric  | 0       |
+|  + tiled_conv_Pipeline_VITIS_LOOP_549_10                                    | 0   |        |             |      |         |         |
+|    add_ln549_fu_101_p2                                                      | -   |        | add_ln549   | add  | fabric  | 0       |
++-----------------------------------------------------------------------------+-----+--------+-------------+------+---------+---------+
+
+
+================================================================
+== Bind Storage Report
+================================================================
++-----------------------------------------------+------+------+--------+-------------------------------------------+---------+------+---------+
+| Name                                          | BRAM | URAM | Pragma | Variable                                  | Storage | Impl | Latency |
++-----------------------------------------------+------+------+--------+-------------------------------------------+---------+------+---------+
+| + tiled_conv                                  | 131  | 0    |        |                                           |         |      |         |
+|   temp_fixp_conv_layer_weights1_0_U           | 2    | -    |        | temp_fixp_conv_layer_weights1_0           | ram_1p  | auto | 1       |
+|   temp_fixp_conv_layer_weights1_0_1_U         | 2    | -    |        | temp_fixp_conv_layer_weights1_0_1         | ram_1p  | auto | 1       |
+|   temp_fixp_conv_layer_weights1_0_2_U         | 2    | -    |        | temp_fixp_conv_layer_weights1_0_2         | ram_1p  | auto | 1       |
+|   temp_fixp_conv_layer_weights1_0_3_U         | 2    | -    |        | temp_fixp_conv_layer_weights1_0_3         | ram_1p  | auto | 1       |
+|   temp_fixp_conv_layer_weights1_0_4_U         | 2    | -    |        | temp_fixp_conv_layer_weights1_0_4         | ram_1p  | auto | 1       |
+|   temp_fixp_conv_layer_weights2_U             | 2    | -    |        | temp_fixp_conv_layer_weights2             | ram_1p  | auto | 1       |
+|   temp_fixp_conv_layer_weights2_1_U           | 2    | -    |        | temp_fixp_conv_layer_weights2_1           | ram_1p  | auto | 1       |
+|   temp_fixp_conv_layer_weights2_2_U           | 2    | -    |        | temp_fixp_conv_layer_weights2_2           | ram_1p  | auto | 1       |
+|   temp_fixp_conv_layer_weights2_3_U           | 2    | -    |        | temp_fixp_conv_layer_weights2_3           | ram_1p  | auto | 1       |
+|   temp_fixp_conv_layer_weights2_4_U           | 2    | -    |        | temp_fixp_conv_layer_weights2_4           | ram_1p  | auto | 1       |
+|   temp_fixp_conv_layer_weights3_U             | 2    | -    |        | temp_fixp_conv_layer_weights3             | ram_1p  | auto | 1       |
+|   temp_fixp_conv_layer_weights3_1_U           | 2    | -    |        | temp_fixp_conv_layer_weights3_1           | ram_1p  | auto | 1       |
+|   temp_fixp_conv_layer_weights3_2_U           | 2    | -    |        | temp_fixp_conv_layer_weights3_2           | ram_1p  | auto | 1       |
+|   temp_fixp_conv_layer_weights3_3_U           | 2    | -    |        | temp_fixp_conv_layer_weights3_3           | ram_1p  | auto | 1       |
+|   temp_fixp_conv_layer_weights3_4_U           | 2    | -    |        | temp_fixp_conv_layer_weights3_4           | ram_1p  | auto | 1       |
+|   temp_fixp_conv_layer_weights4_U             | 2    | -    |        | temp_fixp_conv_layer_weights4             | ram_1p  | auto | 1       |
+|   temp_fixp_conv_layer_weights4_1_U           | 2    | -    |        | temp_fixp_conv_layer_weights4_1           | ram_1p  | auto | 1       |
+|   temp_fixp_conv_layer_weights4_2_U           | 2    | -    |        | temp_fixp_conv_layer_weights4_2           | ram_1p  | auto | 1       |
+|   temp_fixp_conv_layer_weights4_3_U           | 2    | -    |        | temp_fixp_conv_layer_weights4_3           | ram_1p  | auto | 1       |
+|   temp_fixp_conv_layer_weights4_4_U           | 2    | -    |        | temp_fixp_conv_layer_weights4_4           | ram_1p  | auto | 1       |
+|   temp_fixp_dense1_weights_U                  | 4    | -    |        | temp_fixp_dense1_weights                  | ram_1p  | auto | 1       |
+|   temp_fixp_dense2_weights_U                  | 2    | -    |        | temp_fixp_dense2_weights                  | ram_1p  | auto | 1       |
+|   temp_input_U                                | 2    | -    |        | temp_input                                | rom_np  | auto | 1       |
+|   temp_input_1_U                              | 2    | -    |        | temp_input_1                              | rom_np  | auto | 1       |
+|   temp_input_2_U                              | 2    | -    |        | temp_input_2                              | rom_np  | auto | 1       |
+|   temp_input_3_U                              | 2    | -    |        | temp_input_3                              | rom_np  | auto | 1       |
+|   temp_input_4_U                              | 2    | -    |        | temp_input_4                              | rom_np  | auto | 1       |
+|   temp_output_feature_map_0_U                 | -    | -    |        | temp_output_feature_map_0                 | ram_1p  | auto | 1       |
+|   fixp_conv_layer_output_feature_map1_U       | 16   | -    |        | fixp_conv_layer_output_feature_map1       | ram_s2p | auto | 1       |
+|   fixp_conv_layer_output_feature_map1_max_0_U | 2    | -    |        | fixp_conv_layer_output_feature_map1_max_0 | ram_s2p | auto | 1       |
+|   fixp_conv_layer_output_feature_map1_max_1_U | 2    | -    |        | fixp_conv_layer_output_feature_map1_max_1 | ram_s2p | auto | 1       |
+|   fixp_conv_layer_output_feature_map1_max_2_U | 2    | -    |        | fixp_conv_layer_output_feature_map1_max_2 | ram_s2p | auto | 1       |
+|   fixp_conv_layer_output_feature_map1_max_3_U | 2    | -    |        | fixp_conv_layer_output_feature_map1_max_3 | ram_s2p | auto | 1       |
+|   fixp_conv_layer_output_feature_map1_max_4_U | 2    | -    |        | fixp_conv_layer_output_feature_map1_max_4 | ram_s2p | auto | 1       |
+|   fixp_conv_layer_output_feature_map2_U       | 8    | -    |        | fixp_conv_layer_output_feature_map2       | ram_s2p | auto | 1       |
+|   fixp_conv_layer_output_feature_map2_max_U   | 4    | -    |        | fixp_conv_layer_output_feature_map2_max   | ram_s2p | auto | 1       |
+|   fixp_conv_layer_output_feature_map3_U       | 4    | -    |        | fixp_conv_layer_output_feature_map3       | ram_s2p | auto | 1       |
+|   fixp_conv_layer_output_feature_map4_U       | 4    | -    |        | fixp_conv_layer_output_feature_map4       | ram_s2p | auto | 1       |
+|   fixp_conv_layer_output_feature_map3_max_U   | 2    | -    |        | fixp_conv_layer_output_feature_map3_max   | ram_s2p | auto | 1       |
+|   fixp_conv_layer_output_feature_map4_max_U   | 2    | -    |        | fixp_conv_layer_output_feature_map4_max   | ram_s2p | auto | 1       |
+|   fixp_dense1_output_U                        | 1    | -    |        | fixp_dense1_output                        | ram_1p  | auto | 1       |
++-----------------------------------------------+------+------+--------+-------------------------------------------+---------+------+---------+
+
+
+================================================================
+== Pragma Report
+================================================================
+* Pragmas with Warnings
++--------+---------+--------------------------+--------------------------------------------+
+| Type   | Options | Location                 | Messages                                   |
++--------+---------+--------------------------+--------------------------------------------+
+| unroll |         | conv1d.cpp:362 in dense1 | Only for/while loops support the 'Unroll ' |
++--------+---------+--------------------------+--------------------------------------------+
+
+* Valid Pragma Syntax
++-----------------+-------------------------------------------------------------+--------------------------------------------------------+
+| Type            | Options                                                     | Location                                               |
++-----------------+-------------------------------------------------------------+--------------------------------------------------------+
+| array_partition | variable=X_buf dim=3 cyclic factor=5                        | conv1d.cpp:25 in conv1d_1, X_buf                       |
+| array_partition | variable=W_buf dim=3 cyclic factor=5                        | conv1d.cpp:26 in conv1d_1, W_buf                       |
+| pipeline        |                                                             | conv1d.cpp:38 in conv1d_1                              |
+| array_partition | variable=W_buf dim=3 cyclic factor=5                        | conv1d.cpp:75 in conv1d_2, W_buf                       |
+| array_partition | variable=X_buf dim=3 cyclic factor=5                        | conv1d.cpp:76 in conv1d_2, X_buf                       |
+| pipeline        |                                                             | conv1d.cpp:86 in conv1d_2                              |
+| array_partition | variable=W_buf dim=3 cyclic factor=5                        | conv1d.cpp:121 in conv1d_3_4, W_buf                    |
+| pipeline        |                                                             | conv1d.cpp:132 in conv1d_3_4                           |
+| array_partition | variable=in dim=3 complete                                  | conv1d.cpp:328 in flatten, in                          |
+| array_partition | variable=in dim=2 complete                                  | conv1d.cpp:329 in flatten, in                          |
+| array_partition | variable=out dim=2 complete                                 | conv1d.cpp:330 in flatten, out                         |
+| pipeline        |                                                             | conv1d.cpp:332 in flatten                              |
+| pipeline        | off                                                         | conv1d.cpp:351 in dense1                               |
+| pipeline        | off                                                         | conv1d.cpp:378 in dense2                               |
+| interface       | m_axi depth=1 port=input_feature_map bundle=fm              | conv1d.cpp:414 in tiled_conv, input_feature_map        |
+| interface       | m_axi depth=1 port=output_feature_map bundle=fm             | conv1d.cpp:415 in tiled_conv, output_feature_map       |
+| interface       | m_axi depth=1 port=fixp_conv_layer_weights1 bundle=c_weight | conv1d.cpp:417 in tiled_conv, fixp_conv_layer_weights1 |
+| interface       | m_axi depth=1 port=fixp_conv_layer_weights2 bundle=c_weight | conv1d.cpp:418 in tiled_conv, fixp_conv_layer_weights2 |
+| interface       | m_axi depth=1 port=fixp_conv_layer_weights3 bundle=c_weight | conv1d.cpp:419 in tiled_conv, fixp_conv_layer_weights3 |
+| interface       | m_axi depth=1 port=fixp_conv_layer_weights4 bundle=c_weight | conv1d.cpp:420 in tiled_conv, fixp_conv_layer_weights4 |
+| interface       | m_axi depth=1 port=fixp_conv_layer_bias1 bundle=c_bias      | conv1d.cpp:421 in tiled_conv, fixp_conv_layer_bias1    |
+| interface       | m_axi depth=1 port=fixp_conv_layer_bias2 bundle=c_bias      | conv1d.cpp:422 in tiled_conv, fixp_conv_layer_bias2    |
+| interface       | m_axi depth=1 port=fixp_conv_layer_bias3 bundle=c_bias      | conv1d.cpp:423 in tiled_conv, fixp_conv_layer_bias3    |
+| interface       | m_axi depth=1 port=fixp_conv_layer_bias4 bundle=c_bias      | conv1d.cpp:424 in tiled_conv, fixp_conv_layer_bias4    |
+| interface       | m_axi depth=1 port=fixp_dense1_weights bundle=dense         | conv1d.cpp:426 in tiled_conv, fixp_dense1_weights      |
+| interface       | m_axi depth=1 port=fixp_dense1_bias bundle=dense            | conv1d.cpp:427 in tiled_conv, fixp_dense1_bias         |
+| interface       | m_axi depth=1 port=fixp_dense2_weights bundle=dense         | conv1d.cpp:428 in tiled_conv, fixp_dense2_weights      |
+| interface       | m_axi depth=1 port=fixp_dense2_bias bundle=dense            | conv1d.cpp:429 in tiled_conv, fixp_dense2_bias         |
+| interface       | s_axilite register port=return                              | conv1d.cpp:431 in tiled_conv, return                   |
+| array_partition | variable=temp_input dim=3 cyclic factor=5                   | conv1d.cpp:447 in tiled_conv, temp_input               |
+| array_partition | variable=temp_input dim=2 complete                          | conv1d.cpp:448 in tiled_conv, temp_input               |
+| array_partition | variable=temp_input dim=1 complete                          | conv1d.cpp:449 in tiled_conv, temp_input               |
++-----------------+-------------------------------------------------------------+--------------------------------------------------------+
+
+
