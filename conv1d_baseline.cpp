@@ -1,4 +1,9 @@
 #include "conv.h"
+#include <iostream>
+#include <fstream>
+#include <cmath>
+
+using namespace std;
 
 fm_t fixp_conv_layer_output_feature_map1[1][32][187];
 fm_t fixp_conv_layer_output_feature_map1_max[1][32][92];
@@ -66,97 +71,177 @@ void conv1d_1 ( //conv1 code
     }
 }
 
-void conv1d_2 ( //conv2 code
-    fm_t Y_buf[1][32][92], //32 output channels, 187 signal length
-    fm_t X_buf[1][32][92], //input channels, signal length
-    wt_t W_buf[32][32][5], //32 out channels, kernel size:5
-    wt_t B_buf[32] //32 outchannels
+void conv1d_2(             // conv2 code
+    fm_t Y_buf[1][32][92], // 32 output channels, 187 signal length
+    fm_t X_buf[1][32][92], // input channels, signal length
+    wt_t W_buf[32][32][5], // 32 out channels, kernel size:5
+    wt_t B_buf[32]         // 32 outchannels
 )
 {
 #pragma HLS pipeline off
 // #pragma HLS array_partition variable=W_buf dim=3 cyclic factor=5
 // #pragma HLS array_partition variable=X_buf dim=3 cyclic factor=5
-//better performance/resource utilization when partioning cyclicly by kernel size(5) rather than doing complete
-//expects input of size 1, 32, 92
-//padding 2 for kernel size 5   
+// better performance/resource utilization when partioning cyclicly by kernel size(5) rather than doing complete
+// expects input of size 1, 32, 92
+// padding 2 for kernel size 5
 conv1d_2a:
-for(int x = 0; x < 32; x++) { //input channels
-    conv1d_2b:
-    for(int c = 0; c < 32; c++) { //output channels
-        conv1d_2c:
-        for(int l = 0; l < 92; l++) { //signal length
-            //#pragma HLS pipeline
+    for (int x = 0; x < 32; x++)
+    { // input channels
+
+    conv1d_2c:
+        for (int l = 0; l < 92; l++)
+        { // signal length
+            Y_buf[0][x][l] += B_buf[x];
+        conv1d_2b:
+            for (int c = 0; c < 32; c++)
+            { // output channels
+
+            // #pragma HLS pipeline
             conv1d_2d:
-            for(int k = 0; k < 5; k++) {
-                if(l+k < 2 || l+k > 93) {
-                    Y_buf[0][c][l] += 0;
-                } else {
-                    Y_buf[0][c][l] += X_buf[0][x][l+k-2] * W_buf[c][x][k];
+                for (int k = 0; k < 5; k++)
+                {
+                    if (l + k < 2 || l + k > 93)
+                    {
+                        Y_buf[0][c][l] += 0;
+                    }
+                    else
+                    {
+                        Y_buf[0][c][l] += X_buf[0][x][l + k - 2] * W_buf[c][x][k];
+                    }
                 }
             }
-            Y_buf[0][c][l] += B_buf[c];
-
-            //Add ReLU
-            if (Y_buf[0][c][l] < 0)
+            // Add ReLU
+            if (Y_buf[0][x][l] < 0)
             {
-                Y_buf[0][c][l] = 0; // Set to zero negative values
-            }
-            else
-            {
-                Y_buf[0][c][l] = Y_buf[0][c][l];
+                Y_buf[0][x][l] = 0; // Set to zero negative values
             }
         }
     }
 }
+// {
+// #pragma HLS pipeline off
+// // #pragma HLS array_partition variable=W_buf dim=3 cyclic factor=5
+// // #pragma HLS array_partition variable=X_buf dim=3 cyclic factor=5
+// //better performance/resource utilization when partioning cyclicly by kernel size(5) rather than doing complete
+// //expects input of size 1, 32, 92
+// //padding 2 for kernel size 5   
+// conv1d_2a:
+// for(int x = 0; x < 32; x++) { //input channels
+//     conv1d_2b:
+//     for(int c = 0; c < 32; c++) { //output channels
+//         conv1d_2c:
+//         //Y_buf[0] = B_buf[c];
+//         for(int l = 0; l < 92; l++) { //signal length
+//         //Y_buf[0][c][l] += B_buf[c]; 
+//             //#pragma HLS pipeline
+//             conv1d_2d:
+//             for(int k = 0; k < 5; k++) {
+//                 if(l+k < 2 || l+k > 93) {
+//                     Y_buf[0][x][l] += 0;
+//                 } else {
+//                     Y_buf[0][x][l] += X_buf[0][x][l+k-2] * W_buf[c][x][k];
+//                 }
+//             }
+//             Y_buf[0][x][l] += B_buf[x];
 
-}
 
-void conv1d_3_4 ( //conv3+4 code
-    fm_t Y_buf[1][32][44], //32 output channels, 187 signal length
-    fm_t X_buf[1][32][44], //input channels, signal length
-    wt_t W_buf[32][32][5], //32 out channels, kernel size:5
-    wt_t B_buf[32] //32 outchannels
+//             //Add ReLU
+//             // if (Y_buf[0][c][l] < 0)
+//             // {
+//             //     Y_buf[0][c][l] = 0; // Set to zero negative values
+//             // }
+//             // else
+//             // {
+//             //     Y_buf[0][c][l] = Y_buf[0][c][l];
+//             // }
+//         }     
+//     }
+// }
+// }
+
+void conv1d_3_4(           // conv3+4 code
+    fm_t Y_buf[1][32][44], // 32 output channels, 187 signal length
+    fm_t X_buf[1][32][44], // input channels, signal length
+    wt_t W_buf[32][32][5], // 32 out channels, kernel size:5
+    wt_t B_buf[32]         // 32 outchannels
 )
 {
-#pragma HLS pipeline off
-//array partioning X_buf causes timing issues with negative slack so lines below are commented out
-//could be because we call this function twice back to back?
-//#pragma HLS array_partition variable=W_buf dim=3 cyclic factor=5
-//#pragma HLS array_partition variable=X_buf dim=3 cyclic factor=5
 
-//expects input of size 1, 32, 92
-//padding 2 for kernel size 5   
+#pragma HLS pipeline off
 conv1d_3a:
-for(int x = 0; x < 32; x++) { //input channels
-    conv1d_3b:
-    for(int c = 0; c < 32; c++) { //output channels
-        conv1d_3c:
-        for(int l = 0; l < 44; l++) { //signal length
-            //#pragma HLS pipeline
-            conv1d_3d:
-            for(int k = 0; k < 5; k++) {
-                if(l+k < 2 || l+k > 45) {
-                    Y_buf[0][c][l] += 0;
-                } else {
-                    Y_buf[0][c][l] += X_buf[0][x][l+k-2] * W_buf[c][x][k];
-                }
-            }
-            Y_buf[0][c][l] += B_buf[c];
-        
-            // Add ReLU
-            if (Y_buf[0][c][l] < 0)
-            {
-                Y_buf[0][c][l] = 0; // Set to zero negative values
-            }
-            else
-            {
-                Y_buf[0][c][l] = Y_buf[0][c][l];
-            }
+    for (int x = 0; x < 32; x++)
+    { // input channels
+    conv1d_3c:
+        for (int l = 0; l < 44; l++)
+        { // signal length
+                 Y_buf[0][x][l] += B_buf[x];
+        conv1d_3b:
+                 for (int c = 0; c < 32; c++)
+                 { // output channels
+                 // #pragma HLS pipeline
+                 conv1d_3d:
+                     for (int k = 0; k < 5; k++)
+                     {
+                    if (l + k < 2 || l + k > 45)
+                    {
+                        Y_buf[0][c][l] += 0;
+                    }
+                    else
+                    {
+                        Y_buf[0][c][l] += X_buf[0][x][l + k - 2] * W_buf[c][x][k];
+                    }
+                     }
+                 }
+
+                 if (Y_buf[0][x][l] < 0)
+                 {
+                     Y_buf[0][x][l] = 0; // Set to zero negative values
+                 }
         }
     }
 }
 
-}
+// {
+// #pragma HLS pipeline off
+// //array partioning X_buf causes timing issues with negative slack so lines below are commented out
+// //could be because we call this function twice back to back?
+// //#pragma HLS array_partition variable=W_buf dim=3 cyclic factor=5
+// //#pragma HLS array_partition variable=X_buf dim=3 cyclic factor=5
+
+// //expects input of size 1, 32, 92
+// //padding 2 for kernel size 5   
+// conv1d_3a:
+// for(int x = 0; x < 32; x++) { //input channels
+//     conv1d_3b:
+//     for(int c = 0; c < 32; c++) { //output channels
+//         conv1d_3c:
+//         for(int l = 0; l < 44; l++) { //signal length
+//             //#pragma HLS pipeline
+//             conv1d_3d:
+//             for(int k = 0; k < 5; k++) {
+//                 if(l+k < 2 || l+k > 45) {
+//                     Y_buf[0][c][l] += 0;
+//                 } else {
+//                     Y_buf[0][c][l] += X_buf[0][x][l+k-2] * W_buf[c][x][k];
+//                 }
+//             }
+//             //Y_buf[0][x][l] += B_buf[x];
+        
+//             // // Add ReLU
+//             // if (Y_buf[0][c][l] < 0)
+//             // {
+//             //     Y_buf[0][c][l] = 0; // Set to zero negative values
+//             // }
+//             // else
+//             // {
+//             //     Y_buf[0][c][l] = Y_buf[0][c][l];
+//             // }
+//         }
+        
+//     }
+// }
+
+// }
 
 void max_pooling1(
     fm_t Y_buf[1][32][187],
@@ -191,6 +276,7 @@ for (int j = 0; j < 32; j++) //32
             Y_maxpool_buf[0][j][k] = max_val;
     }
 }
+
 }
 
 void max_pooling2(
@@ -368,7 +454,7 @@ void dense1(
         }
     }
 
-    #pragma HLS unroll
+    //#pragma HLS unroll
     // apply ReLU activation function
     last_acc:
     for (int i = 0; i < 32; i++) {
@@ -522,7 +608,19 @@ void tiled_conv (
         fixp_conv_layer_bias1 //32 outchannels
     );
 
+    // cout << "Output conv1" << endl;
+    // for(int f = 0; f < 187; f++){
+    //     cout << fixp_conv_layer_output_feature_map1[0][0][f] << "   ";
+    // }
+    // cout << endl;
+
     max_pooling1(fixp_conv_layer_output_feature_map1, fixp_conv_layer_output_feature_map1_max);
+
+    // cout << "output max1" << endl;
+    // for(int f = 0; f < 92; f++){
+    //     cout << fixp_conv_layer_output_feature_map1_max[0][0][f] << "   ";
+    // }
+    // cout << endl;
     
     conv1d_2 ( //conv2
         fixp_conv_layer_output_feature_map2, 
@@ -531,7 +629,26 @@ void tiled_conv (
         fixp_conv_layer_bias2 //32 outchannels
     );
 
+    cout << "output conv2" << endl;
+    for(int f = 0; f < 92; f++){
+        cout << fixp_conv_layer_output_feature_map2[0][0][f] << "   ";
+    }
+    cout << endl;
+
+    // cout << "bias conv2" << endl;
+    // for(int f = 0; f < 32; f++){
+    //     cout << fixp_conv_layer_bias2[f] << "   ";
+    // }
+    // cout << endl;
+
+
     max_pooling2(fixp_conv_layer_output_feature_map2, fixp_conv_layer_output_feature_map2_max);
+
+    // cout << "output max2" << endl;
+    // for(int f = 0; f < 44; f++){
+    //     cout << fixp_conv_layer_output_feature_map2_max[0][0][f] << "   ";
+    // }
+    // cout << endl;
 
     conv1d_3_4 ( //conv3
         fixp_conv_layer_output_feature_map3, 
@@ -540,6 +657,12 @@ void tiled_conv (
         fixp_conv_layer_bias3 //32 outchannels
     );
 
+    // cout << "output conv3" << endl;
+    // for(int f = 0; f < 44; f++){
+    //     cout << fixp_conv_layer_output_feature_map3[0][0][f] << "   ";
+    // }
+    // cout << endl;
+
     conv1d_3_4 ( //conv3
         fixp_conv_layer_output_feature_map4, 
         fixp_conv_layer_output_feature_map3, 
@@ -547,9 +670,28 @@ void tiled_conv (
         fixp_conv_layer_bias4 //32 outchannels
     );
 
+    // cout << "output conv4" << endl;
+    // for(int f = 0; f < 44; f++){
+    //     cout << fixp_conv_layer_output_feature_map4[0][0][f] << "   ";
+    // }
+    // cout << endl;
+
     max_pooling3(fixp_conv_layer_output_feature_map4, fixp_conv_layer_output_feature_map3_max);
+    
+    // cout << "output max3" << endl;
+    // for(int f = 0; f < 20; f++){
+    //     cout << fixp_conv_layer_output_feature_map4[0][0][f] << "   ";
+    // }
+    // cout << endl;
+
     max_pooling4(fixp_conv_layer_output_feature_map3_max, fixp_conv_layer_output_feature_map4_max);
     max_pooling5(fixp_conv_layer_output_feature_map4_max, fixp_conv_layer_output_feature_map5_max);
+
+    // cout << "output max5" << endl;
+    // for(int f = 0; f < 2; f++){
+    //     cout << fixp_conv_layer_output_feature_map5_max[0][0][f] << "   ";
+    // }
+    // cout << endl;
 
     flatten(fixp_conv_layer_output_feature_map5_max, fixp_conv_layer_output_feature_flat); //makes array into (1,64)
 

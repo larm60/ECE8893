@@ -1,4 +1,9 @@
 #include "conv.h"
+#include <iostream>
+#include <fstream>
+#include <cmath>
+
+using namespace std;
 
 fm_t fixp_conv_layer_output_feature_map1[1][32][187];
 fm_t fixp_conv_layer_output_feature_map1_max[1][32][92];
@@ -79,10 +84,13 @@ void conv1d_2 ( //conv2 code
 //padding 2 for kernel size 5   
 conv1d_2a:
 for(int x = 0; x < 32; x++) { //input channels
+    conv1d_2c:
+        for(int l = 0; l < 92; l++) { //signal length
+    Y_buf[0][x][l] += B_buf[x];
     conv1d_2b:
     for(int c = 0; c < 32; c++) { //output channels
-        conv1d_2c:
-        for(int l = 0; l < 92; l++) { //signal length
+        // conv1d_2c:
+        // for(int l = 0; l < 92; l++) { //signal length
             #pragma HLS pipeline
             conv1d_2d:
             for(int k = 0; k < 5; k++) {
@@ -92,18 +100,22 @@ for(int x = 0; x < 32; x++) { //input channels
                     Y_buf[0][c][l] += X_buf[0][x][l+k-2] * W_buf[c][x][k];
                 }
             }
-            Y_buf[0][c][l] += B_buf[c];
+            //Y_buf[0][c][l] += B_buf[c];
 
-            //Add ReLU
-            if (Y_buf[0][c][l] < 0)
-            {
-                Y_buf[0][c][l] = 0; // Set to zero negative values
-            }
-            else
-            {
-                Y_buf[0][c][l] = Y_buf[0][c][l];
-            }
+            // //Add ReLU
+            // if (Y_buf[0][c][l] < 0)
+            // {
+            //     Y_buf[0][c][l] = 0; // Set to zero negative values
+            // }
+            // else
+            // {
+            //     Y_buf[0][c][l] = Y_buf[0][c][l];
+            // }
         }
+        if (Y_buf[0][x][l] < 0)
+                 {
+                     Y_buf[0][x][l] = 0; // Set to zero negative values
+                 }
     }
 }
 
@@ -125,10 +137,13 @@ void conv1d_3_4 ( //conv3+4 code
 //padding 2 for kernel size 5   
 conv1d_3a:
 for(int x = 0; x < 32; x++) { //input channels
+ conv1d_3c:
+        for(int l = 0; l < 44; l++) { //signal length
+        Y_buf[0][x][l] += B_buf[x];
     conv1d_3b:
     for(int c = 0; c < 32; c++) { //output channels
-        conv1d_3c:
-        for(int l = 0; l < 44; l++) { //signal length
+        // conv1d_3c:
+        // for(int l = 0; l < 44; l++) { //signal length
             #pragma HLS pipeline
             conv1d_3d:
             for(int k = 0; k < 5; k++) {
@@ -138,18 +153,23 @@ for(int x = 0; x < 32; x++) { //input channels
                     Y_buf[0][c][l] += X_buf[0][x][l+k-2] * W_buf[c][x][k];
                 }
             }
-            Y_buf[0][c][l] += B_buf[c];
+            //Y_buf[0][c][l] += B_buf[c];
         
             // Add ReLU
-            if (Y_buf[0][c][l] < 0)
-            {
-                Y_buf[0][c][l] = 0; // Set to zero negative values
-            }
-            else
-            {
-                Y_buf[0][c][l] = Y_buf[0][c][l];
-            }
+            // if (Y_buf[0][c][l] < 0)
+            // {
+            //     Y_buf[0][c][l] = 0; // Set to zero negative values
+            // }
+            // else
+            // {
+            //     Y_buf[0][c][l] = Y_buf[0][c][l];
+            // }
         }
+          if (Y_buf[0][x][l] < 0)
+            {
+                Y_buf[0][x][l] = 0; // Set to zero negative values
+            }
+         
     }
 }
 
@@ -511,6 +531,12 @@ void tiled_conv (
         fixp_conv_layer_bias1 //32 outchannels
     );
 
+    // cout << "output conv1" << endl;
+    // for(int f = 0; f < 187; f++){
+    //     cout << fixp_conv_layer_output_feature_map1[0][0][f] << "   ";
+    // }
+    // cout << endl;
+
     max_pooling1(fixp_conv_layer_output_feature_map1, fixp_conv_layer_output_feature_map1_max);
     
     conv1d_2 ( //conv2
@@ -529,6 +555,12 @@ void tiled_conv (
         fixp_conv_layer_bias3 //32 outchannels
     );
 
+    // cout << "output conv3" << endl;
+    // for(int f = 0; f < 44; f++){
+    //     cout << fixp_conv_layer_output_feature_map2_max[0][0][f] << "   ";
+    // }
+    // cout << endl;
+
     conv1d_3_4 ( //conv3
         fixp_conv_layer_output_feature_map4, 
         fixp_conv_layer_output_feature_map3, 
@@ -536,6 +568,7 @@ void tiled_conv (
         fixp_conv_layer_bias4 //32 outchannels
     );
 
+    
     max_pooling3(fixp_conv_layer_output_feature_map4, fixp_conv_layer_output_feature_map3_max);
     max_pooling4(fixp_conv_layer_output_feature_map3_max, fixp_conv_layer_output_feature_map4_max);
     max_pooling5(fixp_conv_layer_output_feature_map4_max, fixp_conv_layer_output_feature_map5_max);
