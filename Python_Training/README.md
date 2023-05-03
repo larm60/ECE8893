@@ -5,3 +5,5 @@ https://ieeexplore.ieee.org/document/9531841
 
 We trained the model using this notebook as reference:
 https://www.kaggle.com/code/mosheyerachmiel/ecg-classification
+
+The cpp file was used to export the bin files of the model from the pth file
