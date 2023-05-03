@@ -12,6 +12,7 @@ Maxpooling 4 only downsample
 
 */
 
+
 #include "conv.h"
 #include <iostream>
 #include <fstream>
@@ -39,14 +40,7 @@ void conv1d_1 ( //conv1 code
     wt_t B_buf[32] //32 outchannels
 )
 {
-    //#pragma HLS inline off
-    //#pragma HLS array_partition variable=Y_buf dim=3 complete
-    #pragma HLS array_partition variable=X_buf dim=3 cyclic factor=5
-    #pragma HLS array_partition variable=W_buf dim=3 cyclic factor=5
-    //better performance/resource utilization when partioning cyclicly by kernel size(5) rather than doing complete
-    // expect input of size 1, 1, 187
-    // padding 2 for kernel size 5
-
+    #pragma HLS pipeline off
     conv1d_1a: 
     for (int c = 0; c < 32; c++) 
     { 
@@ -54,7 +48,7 @@ void conv1d_1 ( //conv1 code
         conv1d_1b:
         for (int l = 0; l < 187; l++)
         { 
-            #pragma HLS pipeline 
+            //#pragma HLS pipeline 
             conv1d_1c:
             for (int k = 0; k < 5; k++)
             {
@@ -75,182 +69,199 @@ void conv1d_1 ( //conv1 code
             {
                 Y_buf[0][c][l] = 0; // Set to zero negative values
             }
+            else
+            {
+                Y_buf[0][c][l] = Y_buf[0][c][l]; 
+            }
+
         }
     }
+
 }
 
-void conv1d_2 ( //conv2 code
-    fm_t Y_buf[1][32][92], //32 output channels, 187 signal length
-    fm_t X_buf[1][32][92], //input channels, signal length
-    wt_t W_buf[32][32][5], //32 out channels, kernel size:5
-    wt_t B_buf[32] //32 outchannels
+void conv1d_2(             // conv2 code
+    fm_t Y_buf[1][32][92], // 32 output channels, 187 signal length
+    fm_t X_buf[1][32][92], // input channels, signal length
+    wt_t W_buf[32][32][5], // 32 out channels, kernel size:5
+    wt_t B_buf[32]         // 32 outchannels
 )
 {
-#pragma HLS array_partition variable=W_buf dim=3 cyclic factor=5
-#pragma HLS array_partition variable=X_buf dim=3 cyclic factor=5
-//better performance/resource utilization when partioning cyclicly by kernel size(5) rather than doing complete
-//expects input of size 1, 32, 92
-//padding 2 for kernel size 5   
-conv1d_2a:
-for(int x = 0; x < 32; x++) { //input channels
-    conv1d_2c:
-        for(int l = 0; l < 92; l++) { //signal length
-    Y_buf[0][x][l] += B_buf[x];
-    conv1d_2b:
-    for(int c = 0; c < 32; c++) { //output channels
-        // conv1d_2c:
-        // for(int l = 0; l < 92; l++) { //signal length
-            #pragma HLS pipeline
-            conv1d_2d:
-            for(int k = 0; k < 5; k++) {
-                if(l+k < 2 || l+k > 93) {
-                    Y_buf[0][c][l] += 0;
-                } else {
-                    Y_buf[0][c][l] += X_buf[0][x][l+k-2] * W_buf[c][x][k];
+
+    #pragma HLS pipeline off
+
+    conv1d_2a:
+    for (int x = 0; x < 32; x++)
+    { // input channels
+        conv1d_2c:
+        for (int l = 0; l < 92; l++)
+        { // signal length
+            Y_buf[0][x][l] += B_buf[x];
+            conv1d_2b:
+            for (int c = 0; c < 32; c++)
+            { // output channels
+                // #pragma HLS pipeline
+                conv1d_2d:
+                for (int k = 0; k < 5; k++)
+                {
+                    if (l + k < 2 || l + k > 93)
+                    {
+                        Y_buf[0][c][l] += 0;
+                    }
+                    else
+                    {
+                        Y_buf[0][c][l] += X_buf[0][x][l + k - 2] * W_buf[c][x][k];
+                    }
                 }
             }
         }
     }
 }
 
-}
 
-void conv1d_3 ( //conv3+4 code
-    fm_t Y_buf[1][32][44], //32 output channels, 187 signal length
-    fm_t X_buf[1][32][44], //input channels, signal length
-    wt_t W_buf[32][32][5], //32 out channels, kernel size:5
-    wt_t B_buf[32] //32 outchannels
+void conv1d_3(           // conv3+4 code
+    fm_t Y_buf[1][32][44], // 32 output channels, 187 signal length
+    fm_t X_buf[1][32][44], // input channels, signal length
+    wt_t W_buf[32][32][5], // 32 out channels, kernel size:5
+    wt_t B_buf[32]         // 32 outchannels
 )
 {
-//array partioning X_buf causes timing issues with negative slack so lines below are commented out
-//could be because we call this function twice back to back?
-#pragma HLS array_partition variable=W_buf dim=3 cyclic factor=5
-//#pragma HLS array_partition variable=X_buf dim=3 cyclic factor=5
 
-//expects input of size 1, 32, 92
-//padding 2 for kernel size 5   
-conv1d_3a:
-for(int x = 0; x < 32; x++) { //input channels
- conv1d_3c:
-        for(int l = 0; l < 44; l++) { //signal length
-        Y_buf[0][x][l] += B_buf[x];
-    conv1d_3b:
-    for(int c = 0; c < 32; c++) { //output channels
-        // conv1d_3c:
-        // for(int l = 0; l < 44; l++) { //signal length
-            #pragma HLS pipeline
-            conv1d_3d:
-            for(int k = 0; k < 5; k++) {
-                if(l+k < 2 || l+k > 45) {
-                    Y_buf[0][c][l] += 0;
-                } else {
-                    Y_buf[0][c][l] += X_buf[0][x][l+k-2] * W_buf[c][x][k];
-                }
-            }
-
-        }
-    }
-}
-
-}
-void conv1d_4 ( //conv3+4 code
-    fm_t Y_buf[1][32][20], //32 output channels, 187 signal length
-    fm_t X_buf[1][32][20], //input channels, signal length
-    wt_t W_buf[32][32][5], //32 out channels, kernel size:5
-    wt_t B_buf[32] //32 outchannels
-)
-{
-//array partioning X_buf causes timing issues with negative slack so lines below are commented out
-//could be because we call this function twice back to back?
-#pragma HLS array_partition variable=W_buf dim=3 cyclic factor=5
-//#pragma HLS array_partition variable=X_buf dim=3 cyclic factor=5
-
-//expects input of size 1, 32, 92
-//padding 2 for kernel size 5   
-conv1d_3a:
-for(int x = 0; x < 32; x++) { //input channels
- conv1d_3c:
-        for(int l = 0; l < 20; l++) { //signal length
-        Y_buf[0][x][l] += B_buf[x];
-    conv1d_3b:
-    for(int c = 0; c < 32; c++) { //output channels
-        // conv1d_3c:
-        // for(int l = 0; l < 44; l++) { //signal length
-            #pragma HLS pipeline
-            conv1d_3d:
-            for(int k = 0; k < 5; k++) {
-                if(l+k < 2 || l+k > 21) {
-                    Y_buf[0][c][l] += 0;
-                } else {
-                    Y_buf[0][c][l] += X_buf[0][x][l+k-2] * W_buf[c][x][k];
+    #pragma HLS pipeline off
+    conv1d_3a:
+    for (int x = 0; x < 32; x++)
+    { // input channels
+        conv1d_3c:
+        for (int l = 0; l < 44; l++)
+        { // signal length
+            Y_buf[0][x][l] += B_buf[x];
+            conv1d_3b:
+            for (int c = 0; c < 32; c++)
+            { // output channels
+            // #pragma HLS pipeline
+                conv1d_3d:
+                for (int k = 0; k < 5; k++)
+                {
+                    if (l + k < 2 || l + k > 45)
+                    {
+                        Y_buf[0][c][l] += 0;
+                    }
+                    else
+                    {
+                        Y_buf[0][c][l] += X_buf[0][x][l + k - 2] * W_buf[c][x][k];
+                    }
                 }
             }
         }
     }
 }
 
+void conv1d_4(           // conv3+4 code
+    fm_t Y_buf[1][32][20], // 32 output channels, 187 signal length
+    fm_t X_buf[1][32][20], // input channels, signal length
+    wt_t W_buf[32][32][5], // 32 out channels, kernel size:5
+    wt_t B_buf[32]         // 32 outchannels
+)
+{
+
+    #pragma HLS pipeline off
+    conv1d_4a:
+    for (int x = 0; x < 32; x++)
+    { // input channels
+        conv1d_4c:
+        for (int l = 0; l < 20; l++)
+        { // signal length
+            Y_buf[0][x][l] += B_buf[x];
+            conv1d_4b:
+            for (int c = 0; c < 32; c++)
+            { // output channels
+            // #pragma HLS pipeline
+                conv1d_4d:
+                for (int k = 0; k < 5; k++)
+                {
+                    if (l + k < 2 || l + k > 21)
+                    {
+                        Y_buf[0][c][l] += 0;
+                    }
+                    else
+                    {
+                        Y_buf[0][c][l] += X_buf[0][x][l + k - 2] * W_buf[c][x][k];
+                    }
+                }
+            }
+        }
+    }
 }
+
 
 void max_pooling1(
     fm_t Y_buf[1][32][187],
     fm_t Y_maxpool_buf[1][32][92])
 {
-//#pragma HLS array_partition variable=Y_buf dim=3 cylic factor=5
-// Perform maxpooling
-int output_size = (187 - KERNEL_SIZE) / STRIDE + 1;
-fm_t max_val = -10000000;
-//std::cout << "Max value:  " << max_val << std::endl;
-for (int j = 0; j < 32; j++) //32
-{ // loop over channels
-    for (int k = 0; k < output_size; k++)
-    { // loop over output width
-            //#pragma HLS pipeline 
-            max_val = -10000000;
-            // Compute max value in kernel window
-            for (int l = 0; l < KERNEL_SIZE; l++)
-            { // loop over kernel size
-                int idx = k * STRIDE + l;
-                fm_t val = Y_buf[0][j][idx];
-                //std::cout << "Value:  " << val << std::endl;
-                if (val > max_val)
-                {
-                max_val = val;
-                //std::cout << "Max value:  " << max_val << std::endl;
-                }
-            }
-            // Store max value in output tensor
-            //std::cout << "Stored value in array:  " << max_val << std::endl;
-            Y_maxpool_buf[0][j][k] = max_val;
+    #pragma HLS pipeline off
+    // #pragma HLS array_partition variable=Y_buf dim=3 cylic factor=5
+    //  Perform maxpooling
+    int output_size = (187 - KERNEL_SIZE) / STRIDE + 1;
+    fm_t max_val = -10000000;
+    // std::cout << "Max value:  " << max_val << std::endl;
+    for (int j = 0; j < 32; j++) // 32
+    {                            // loop over channels
+        for (int k = 0; k < output_size; k++)
+        { // loop over output width
+                    // #pragma HLS pipeline
+                    max_val = -10000000;
+                    // Compute max value in kernel window
+                    for (int l = 0; l < KERNEL_SIZE; l++)
+                    { // loop over kernel size
+                        int idx = k * STRIDE + l;
+                        fm_t val = Y_buf[0][j][idx];
+                        // std::cout << "Value:  " << val << std::endl;
+                        if (val > max_val)
+                        {
+                    max_val = val;
+                    // std::cout << "Max value:  " << max_val << std::endl;
+                        }
+                    }
+                    // Store max value in output tensor
+                    // std::cout << "Stored value in array:  " << max_val << std::endl;
+                    Y_maxpool_buf[0][j][k] = max_val;
+        }
     }
-}
 }
 
 void max_pooling2(
     fm_t Y_buf[1][32][92],
     fm_t Y_maxpool_buf[1][32][44])
-{
-// Add ReLU
-for (int x = 0; x < 32; x++)
-{ // input channels
-    for (int l = 0; l < 92; l++)
-    { // signal length
+{   
+    #pragma HLS pipeline off
+
+    //Add ReLU
+    for (int x = 0; x < 32; x++)
+    { // input channels
+        for (int l = 0; l < 92; l++)
+        { // signal length
             if (Y_buf[0][x][l] < 0)
             {
-                Y_buf[0][x][l] = 0;
+                Y_buf[0][x][l] = 0; // Set to zero negative values
             }
+            else
+            {
+                Y_buf[0][x][l] = Y_buf[0][x][l];
+            }
+        }
     }
-}
-
-// Perform maxpooling
-int output_size = (92 - KERNEL_SIZE) / STRIDE + 1;
-float max_val = -10000000;
-//std::cout << "Max value:  " << max_val << std::endl;
-for (int j = 0; j < 32; j++) //32
-{ // loop over channels
-    for (int k = 0; k < output_size; k++)
-    { // loop over output width
+                    
+    // Perform maxpooling
+    int output_size = (92 - KERNEL_SIZE) / STRIDE + 1;
+    //float max_val = -10000000;
+    //std::cout << "Max value:  " << max_val << std::endl;
+    for (int j = 0; j < 32; j++) //32
+    { // loop over channels
+    float max_val = -10000000;
+    //std::cout << "Max value:  " << max_val << std::endl;
+        for (int k = 0; k < output_size; k++)
+        { // loop over output width
             //std::cout << "Window:  " << k << std::endl;
-            max_val = -10000000;
+            
             // Compute max value in kernel window
             for (int l = 0; l < KERNEL_SIZE; l++)
             { // loop over kernel size
@@ -266,140 +277,160 @@ for (int j = 0; j < 32; j++) //32
             // Store max value in output tensor
             //std::cout << "Stored value in array:  " << max_val << std::endl;
             Y_maxpool_buf[0][j][k] = max_val;
+            max_val = -1000;
+        }
     }
-}
 }
 
 void max_pooling3(
     fm_t Y_buf[1][32][44],
     fm_t Y_maxpool_buf[1][32][20])
 {
-// Add ReLU
-for (int x = 0; x < 32; x++)
-{ // input channels
-    for (int l = 0; l < 44; l++)
-    { // signal length
+    #pragma HLS pipeline off
+    //Add ReLU
+    for (int x = 0; x < 32; x++)
+    { // input channels
+        for (int l = 0; l < 44; l++)
+        { // signal length
             if (Y_buf[0][x][l] < 0)
             {
                 Y_buf[0][x][l] = 0; // Set to zero negative values
             }
+            else
+            {
+                Y_buf[0][x][l] = Y_buf[0][x][l];
+            }
+
+        }
     }
-}
-// Perform maxpooling
-int output_size = (44 - KERNEL_SIZE) / STRIDE + 1;
-float max_val = -10000000;
-//std::cout << "Max value:  " << max_val << std::endl;
-for (int j = 0; j < 32; j++) //32
-{ // loop over channels
-    for (int k = 0; k < output_size; k++)
-    { // loop over output width
+
+    // Perform maxpooling
+    int output_size = (44 - KERNEL_SIZE) / STRIDE + 1;
+    float max_val = -10000000;
+    //std::cout << "Max value:  " << max_val << std::endl;
+    for (int j = 0; j < 32; j++) //32
+    { // loop over channels
+        for (int k = 0; k < output_size; k++)
+        { // loop over output width
             //std::cout << "Window:  " << k << std::endl;
             max_val = -10000000;
-                      // Compute max value in kernel window
-                      for (int l = 0; l < KERNEL_SIZE; l++)
+            // Compute max value in kernel window
+            for (int l = 0; l < KERNEL_SIZE; l++)
             { // loop over kernel size
                 int idx = k * STRIDE + l;
                 float val = Y_buf[0][j][idx];
                 //std::cout << "Value:  " << val << std::endl;
                 if (val > max_val)
                 {
-                max_val = val;
-                //std::cout << "Max value:  " << max_val << std::endl;
+                    max_val = val;
+                    //std::cout << "Max value:  " << max_val << std::endl;
                 }
             }
             // Store max value in output tensor
             //std::cout << "Stored value in array:  " << max_val << std::endl;
             Y_maxpool_buf[0][j][k] = max_val;
+            max_val = -1000;
+        }
     }
-}
 }
 
 void max_pooling4(
     fm_t Y_buf[1][32][20],
     fm_t Y_maxpool_buf[1][32][8])
 {
-//Add ReLU
-for (int x = 0; x < 32; x++)
-{ // input channels
-    for (int l = 0; l < 20; l++)
-    { // signal length
+    #pragma HLS pipeline off
+    //Add ReLU
+    for (int x = 0; x < 32; x++)
+    { // input channels
+        for (int l = 0; l < 20; l++)
+        { // signal length
             if (Y_buf[0][x][l] < 0)
             {
                 Y_buf[0][x][l] = 0; // Set to zero negative values
             }
+            else
+            {
+                Y_buf[0][x][l] = Y_buf[0][x][l];
+            }
+
+        }
     }
-}
-// Perform maxpooling
-int output_size = (20 - KERNEL_SIZE) / STRIDE + 1;
-float max_val = -10000000;
-//std::cout << "Max value:  " << max_val << std::endl;
-for (int j = 0; j < 32; j++) //32
-{ // loop over channels
-    for (int k = 0; k < output_size; k++)
-    { // loop over output width
-            //std::cout << "Window:  " << k << std::endl;
+
+    // Perform maxpooling
+    int output_size = (20 - KERNEL_SIZE) / STRIDE + 1;
+    float max_val = -10000000;
+    // std::cout << "Max value:  " << max_val << std::endl;
+    for (int j = 0; j < 32; j++) // 32
+    {                            // loop over channels
+        for (int k = 0; k < output_size; k++)
+        { // loop over output width
+                // std::cout << "Window:  " << k << std::endl;
             max_val = -10000000;
-                      // Compute max value in kernel window
-                      for (int l = 0; l < KERNEL_SIZE; l++)
+            // Compute max value in kernel window
+            for (int l = 0; l < KERNEL_SIZE; l++)
             { // loop over kernel size
                 int idx = k * STRIDE + l;
                 float val = Y_buf[0][j][idx];
-                //std::cout << "Value:  " << val << std::endl;
+                // std::cout << "Value:  " << val << std::endl;
                 if (val > max_val)
                 {
-                max_val = val;
-                //std::cout << "Max value:  " << max_val << std::endl;
+                    max_val = val;
+                    // std::cout << "Max value:  " << max_val << std::endl;
                 }
             }
             // Store max value in output tensor
-            //std::cout << "Stored value in array:  " << max_val << std::endl;
+            // std::cout << "Stored value in array:  " << max_val << std::endl;
             Y_maxpool_buf[0][j][k] = max_val;
+            max_val = -1000;
+        }
     }
-}
 }
 
 void max_pooling5(
     fm_t Y_buf[1][32][8],
     fm_t Y_maxpool_buf[1][32][2])
 {
-// Perform maxpooling
-int output_size = (8 - KERNEL_SIZE) / STRIDE + 1;
-float max_val = -10000000;
-//std::cout << "Max value:  " << max_val << std::endl;
-for (int j = 0; j < 32; j++) //32
-{ // loop over channels
-    for (int k = 0; k < output_size; k++)
-    { // loop over output width
+    #pragma HLS pipeline off
+    // Perform maxpooling
+    int output_size = (8 - KERNEL_SIZE) / STRIDE + 1;
+    float max_val = -10000000;
+    //std::cout << "Max value:  " << max_val << std::endl;
+    for (int j = 0; j < 32; j++) //32
+    { // loop over channels
+        for (int k = 0; k < output_size; k++)
+        { // loop over output width
             //std::cout << "Window:  " << k << std::endl;
             max_val = -10000000;
-                      // Compute max value in kernel window
-                      for (int l = 0; l < KERNEL_SIZE; l++)
+            // Compute max value in kernel window
+            for (int l = 0; l < KERNEL_SIZE; l++)
             { // loop over kernel size
                 int idx = k * STRIDE + l;
                 float val = Y_buf[0][j][idx];
                 //std::cout << "Value:  " << val << std::endl;
                 if (val > max_val)
                 {
-                max_val = val;
-                //std::cout << "Max value:  " << max_val << std::endl;
+                    max_val = val;
+                    //std::cout << "Max value:  " << max_val << std::endl;
                 }
             }
             // Store max value in output tensor
             //std::cout << "Stored value in array:  " << max_val << std::endl;
             Y_maxpool_buf[0][j][k] = max_val;
+            max_val = -1000;
+        }
     }
-}
 }
 
 void flatten(
     fm_t in[1][32][2],
     fm_t out[1][64])
 {
-    #pragma HLS array_partition variable=in dim=3 complete
-    #pragma HLS array_partition variable=in dim=2 complete
-    #pragma HLS array_partition variable=out dim=2 complete
+    #pragma HLS pipeline off
+    // #pragma HLS array_partition variable=in dim=3 complete
+    // #pragma HLS array_partition variable=in dim=2 complete
+    // #pragma HLS array_partition variable=out dim=2 complete
 
-    #pragma HLS pipeline
+    // #pragma HLS pipeline
     flatten_a:
     for(int i = 0; i < 32; i++){
         flatten_b:
@@ -429,7 +460,7 @@ void dense1(
         }
     }
 
-    #pragma HLS unroll
+    //#pragma HLS unroll
     // apply ReLU activation function
     last_acc:
     for (int i = 0; i < 32; i++) {
@@ -460,6 +491,8 @@ void dense2(
     }
 }
 
+
+
 void tiled_conv (
     fm_t input_feature_map[1][1][187],
     wt_t fixp_conv_layer_weights1[32][1][5],
@@ -486,6 +519,7 @@ void tiled_conv (
     #pragma HLS INTERFACE m_axi depth=1  port=fixp_conv_layer_weights2  bundle=c_weight
     #pragma HLS INTERFACE m_axi depth=1  port=fixp_conv_layer_weights3  bundle=c_weight
     #pragma HLS INTERFACE m_axi depth=1  port=fixp_conv_layer_weights4  bundle=c_weight
+
     #pragma HLS INTERFACE m_axi depth=1  port=fixp_conv_layer_bias1  bundle=c_bias
     #pragma HLS INTERFACE m_axi depth=1  port=fixp_conv_layer_bias2  bundle=c_bias
     #pragma HLS INTERFACE m_axi depth=1  port=fixp_conv_layer_bias3  bundle=c_bias
@@ -498,6 +532,8 @@ void tiled_conv (
     
     #pragma HLS INTERFACE s_axilite register	port=return
 
+    #pragma HLS pipeline off
+
     wt_t temp_fixp_conv_layer_weights1[32][1][5];
     wt_t temp_fixp_conv_layer_weights2[32][32][5];
     wt_t temp_fixp_conv_layer_weights3[32][32][5];
@@ -507,15 +543,12 @@ void tiled_conv (
     fm_t temp_input[1][1][187];
     fm_t temp_output_feature_map[5];
 
-    #pragma HLS array_partition variable=temp_fixp_conv_layer_weights1 dim=3 complete
-    #pragma HLS array_partition variable=temp_fixp_conv_layer_weights1 dim=2 complete
-    #pragma HLS array_partition variable=temp_fixp_conv_layer_weights2 dim=3 complete
-    #pragma HLS array_partition variable=temp_fixp_conv_layer_weights3 dim=3 complete
-    #pragma HLS array_partition variable=temp_fixp_conv_layer_weights4 dim=3 complete
-
-    #pragma HLS array_partition variable=temp_input dim=3 cyclic factor=5
-    #pragma HLS array_partition variable=temp_input dim=2 complete
-    #pragma HLS array_partition variable=temp_input dim=1 complete
+    wt_t temp_fixp_conv1_bias[32];
+    wt_t temp_fixp_conv2_bias[32];
+    wt_t temp_fixp_conv3_bias[32];
+    wt_t temp_fixp_conv4_bias[32];
+    wt_t temp_fixp_dense1_bias[32];
+    wt_t temp_fixp_dense2_bias[5];
 
     //moves values from DRAM to BRAM only for arrays that get partitioned to reduce communication overhead
     load_input:
@@ -548,6 +581,7 @@ void tiled_conv (
         }
     }
 
+
     load_conv_weights4:
     for(int i = 0; i < 32; i++) {
         for(int k = 0; k < 32; k++) {
@@ -556,6 +590,7 @@ void tiled_conv (
             }
         }
     }
+
 
     load_dense1_weights:
     for(int i = 0; i < 32; i++) {
@@ -571,12 +606,12 @@ void tiled_conv (
         }
     }
 
-    load_output_zeros:
+     load_output:
     for(int i = 0; i < 5; i++){
         temp_output_feature_map[i]=output_feature_map[i];
     }
+    
 
- 
     //begin CNN code 
     conv1:
     conv1d_1 ( //conv1 code
@@ -588,7 +623,7 @@ void tiled_conv (
 
     maxpool1:
     max_pooling1(fixp_conv_layer_output_feature_map1, fixp_conv_layer_output_feature_map1_max);
-    
+
     conv2:
     conv1d_2 ( //conv2
         fixp_conv_layer_output_feature_map2, 
@@ -612,7 +647,7 @@ void tiled_conv (
     max_pooling3(fixp_conv_layer_output_feature_map3, fixp_conv_layer_output_feature_map3_max);
 
     conv4:
-    conv1d_4 ( //conv3
+    conv1d_4 ( //conv4
         fixp_conv_layer_output_feature_map4, 
         fixp_conv_layer_output_feature_map3_max, 
         temp_fixp_conv_layer_weights4, //32 out channels, kernel size:5
@@ -621,7 +656,7 @@ void tiled_conv (
 
     maxpool4:
     max_pooling4(fixp_conv_layer_output_feature_map4, fixp_conv_layer_output_feature_map4_max);
-
+ 
     maxpool5:
     max_pooling5(fixp_conv_layer_output_feature_map4_max, fixp_conv_layer_output_feature_map5_max);
 
@@ -631,13 +666,11 @@ void tiled_conv (
     dense1:
     dense1(fixp_conv_layer_output_feature_flat, fixp_dense1_bias, temp_fixp_dense1_weights,  fixp_dense1_output);
 
-
     dense2:
     dense2(fixp_dense1_output, fixp_dense2_bias, temp_fixp_dense2_weights, temp_output_feature_map);
-    
-    //Write back to DRAM
-    load_output_toDRAM:
     for(int i = 0; i < 5; i++){
         output_feature_map[i] = temp_output_feature_map[i];
     }
+
+    
 }
